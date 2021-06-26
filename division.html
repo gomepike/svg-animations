@@ -1,0 +1,262 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Scales An</title>
+
+    <style>
+        #left_hand {
+            transform-origin: 50% 10%;
+        }
+
+        #right_hand {
+            transform-origin: 50% 10%;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="  height: 100%; width: 100%; display: flex;">
+        <div id="mainDiv" style="width: 20%; height: auto;">
+            <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+                <g id="total_graph">
+                    <title>Layer 1</title>
+                    <g id="svg_7">
+                        <rect transform="rotate(2.82952 273 420)" stroke-width="0" id="svg_2" height="26" width="232"
+                            y="407" x="157" stroke="#000" fill="#8CD79F" />
+                        <rect stroke-width="0" id="svg_1" height="289" width="26" y="139" x="155" stroke="#000"
+                            fill="#8CD79F" />
+                    </g>
+                    <g id="total_bar" transform="translate(0, 30)">
+                        <rect transform="rotate(1.84501 369.026 334.389)" stroke="#000" stroke-width="0" id="svg_4"
+                            height="7.65829" width="24.4422" y="330.5598" x="356.80492" fill="#FABA6F" />
+                        <rect stroke-width="0" stroke="#000" id="svg_3" height="161" width="20" y="330" x="349"
+                            fill="#FABA6F" />
+                    </g>
+                </g>
+                <script type="text/javascript">
+                    // TODO class container
+                    // TODO class carrier 
+
+                    // TODO path for animation (pipe)
+                    // main-divider path quarter circle
+                    // divider-remainder path (z)
+
+                    class Circle {
+                        constructor(id, r, cy, cx, translateX, translateAngle) {
+                            this.rx = r;
+                            this.ry = r;
+                            this.stroke = "#000";
+                            this.fill = "#CE7975"
+                            this.id = id;
+                            this.cx = cx;
+                            this.cy = cy;
+                            this.strokeWidth = 0;
+                            this.translateX = translateX;
+                            this.translateAngle = translateAngle;
+                            this.svg = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+                        }
+
+                        createSVG() {
+                            this.svg.setAttribute('stroke', this.stroke);
+                            this.svg.setAttribute('ry', this.ry);
+                            this.svg.setAttribute('rx', this.rx);
+                            this.svg.setAttribute('stroke-width', this.strokeWidth);
+                            this.svg.setAttribute('fill', this.fill);
+                            this.svg.setAttribute('id', this.id);
+                            this.svg.setAttribute('cy', this.cy);
+                            this.svg.setAttribute('cx', this.cx);
+                            this.svg.setAttribute('transform', "translate(" + this.translateX + ", 1) rotate(" +
+                                this.translateAngle + ")");
+                            return this.svg;
+                        }
+
+                        moveOuterCircle(toX, toY) {
+                            for (i = 0; i <= 100; i++) {
+                                // TODO set circular x - y
+                                this.svg.setAttribute('cy', this.cy);
+                                this.svg.setAttribute('cx', this.cx);
+                                this.svg.setAttribute('transform', "translate(" + this.translateX + ", 1) rotate(" +
+                                    this.translateAngle + ")");
+                                setTimeout(function timer() {
+                                    svg.appendChild(circle);
+                                }, i * 10);
+                            }
+                        }
+
+                        dropLower(toY) {
+                            for (i = 0; i <= 100; i++) {
+
+                                this.svg.setAttribute('cy', this.cy);
+                                this.svg.setAttribute('cx', this.cx);
+                                this.svg.setAttribute('transform', "translate(" + toY + ");");
+                                setTimeout(function timer() {
+                                    svg.appendChild(circle);
+                                }, i * 10);
+                            }
+                        }
+                    }
+                </script>
+
+
+                <script type="text/javascript">
+                    const svg = document.getElementsByTagName("svg")[0];
+                    var interval = setInterval(fillCircles(32), 16);
+
+                    function fillCircles(count) {
+                        // TODO move to two loops which is more suitable for division algorithm
+
+                        var cx = 195.5;
+                        for (i = 1; i <= count; i++) {
+                            // TODO fix second row first element
+                            // 18 multiplier since radius is 8
+                            const cy = 399.5 - 18 * (Math.floor((i - 1) / 10));
+                            const translateX =  18 * (9-(i - 1) % 10) - 18;
+                            const translateAngle = -0.25 * ((i - 1) % 10) - 0.25;
+                            const circle = new Circle("circle_" + i, 8, cy, cx, translateX, translateAngle).createSVG();
+                            setTimeout(function timer() {
+                                svg.appendChild(circle);
+                            }, i * 100);
+                        }
+
+
+                    }
+                </script>
+            </svg>
+
+        </div>
+        <div style="   display: flex; align-items: center;">
+            <div id="dividerDiv"
+                style=" margin-left: -100px; margin-bottom: 800px; padding-top: 150px; width: 20%; float:left  ">
+
+                <svg id="dividerSvg" width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+                    <g id="Layer_1">
+                        <title>Layer 1</title>
+                        <g id="svg_9">
+                            <rect transform="rotate(2.82952 401.491 390.741)" stroke-width="0" id="svg_7" height="26"
+                                width="232" y="415" x="156" stroke="#000" fill="#8CD79F"></rect>
+                             <rect stroke="#000" stroke-width="0" id="svg_6" height="50.37964" width="26" y="370" x="155"
+                                fill="#8CD79F"></rect>
+                        </g>
+                        <g id="total_div_bar" transform="translate(0, 30)">
+                            <rect transform="rotate(1.84501 492.689 375.82)" stroke="#000" stroke-width="0" id="svg_4"
+                                height="7.65829" width="24.4422" y="384" x="355" fill="#FABA6F"></rect>
+                             <rect stroke="#000" stroke-width="0" id="svg_3" height="48.58636" width="20" y="380" x="349"
+                                fill="#FABA6F"></rect>
+                        </g>
+                    </g>
+                    <script type="text/javascript">
+                        class Circle {
+                            constructor(id, r, cy, cx, translateX, translateAngle) {
+                                this.rx = r;
+                                this.ry = r;
+                                this.stroke = "#000";
+                                this.fill = "#CE7975"
+                                this.id = id;
+                                this.cx = cx;
+                                this.cy = cy;
+                                this.strokeWidth = 0;
+                                this.translateX = translateX;
+                                this.translateAngle = translateAngle;
+                            }
+                            createSVG() {
+                                const circle = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+                                circle.setAttribute('stroke', this.stroke);
+                                circle.setAttribute('ry', this.ry);
+                                circle.setAttribute('rx', this.rx);
+                                circle.setAttribute('stroke-width', this.strokeWidth);
+                                circle.setAttribute('fill', this.fill);
+                                circle.setAttribute('id', this.id);
+                                circle.setAttribute('cy', this.cy);
+                                circle.setAttribute('cx', this.cx);
+                                circle.setAttribute('transform', "translate(" + this.translateX + ", 1) rotate(" +
+                                    this.translateAngle + ")");
+                                return circle;
+                            }
+                        }
+                    </script>
+
+
+                    <script type="text/javascript">
+                        const dividerSvg = document.getElementById("dividerSvg");
+
+                        function moveBar(count) {
+
+                            for (let j = 1; j <= count * 10; j++) {
+                                let animationMove = (100 - count * 10) * j / (count * 10);
+                                setTimeout(function timer() {
+                                    console.log("an:" + animationMove + " ypos:" + (70 - j / 10));
+                                    total_div_bar.setAttribute('transform', "translate(" + -1.583 *animationMove + "," + (20 - j / 10) + ")")
+                                }, j * 16);
+                            }
+                        }
+
+                        function fillDivisor(count) {
+                            // TODO move to two loops which is more suitable for division algorithm
+
+                            var cx = 190;
+                            for (i = 1; i <= count; i++) {
+                                // TODO fix second row first element
+                                // 18 multiplier since radius is 8
+                                const cy = 394 - 18 * (Math.floor((i - 1) / 10));
+                                const translateX = 18 * ((i - 1) % 10);
+                                const translateAngle = 0.12 * ((i - 1) % 10) + 0.12;
+                                const circle = new Circle("circle_" + i, 8, cy, cx, translateX, translateAngle)
+                                    .createSVG();
+                                setTimeout(function timer() {
+                                    dividerSvg.appendChild(circle);
+                                }, i * 100);
+                            }
+                            setInterval(moveBar(count), 1234);
+
+                        }
+                        fillDivisor(4);
+
+                        function clearTo() {
+
+                        }
+                    </script>
+                </svg>
+
+            </div>
+            <div id="remainderDiv" style=" margin-left: -250px;  width: 20%; float:left ">
+                <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
+                    <g id="total_graph">
+                        <title>Layer 1</title>
+                        <g id="svg_7">
+                            <rect transform="rotate(2.82952 273 420)" stroke-width="0" id="svg_2" height="26"
+                                width="232" y="407" x="157" stroke="#000" fill="#8CD79F" />
+                            <rect stroke-width="0" id="svg_1" height="289" width="26" y="139" x="155" stroke="#000"
+                                fill="#8CD79F" />
+                        </g>
+                        <g id="total_bar_remainder" transform="translate(0, 30)">
+                            <rect transform="rotate(1.84501 369.026 334.389)" stroke="#000" stroke-width="0" id="svg_4"
+                                height="7.65829" width="24.4422" y="330.5598" x="356.80492" fill="#FABA6F" />
+                            <rect stroke-width="0" stroke="#000" id="svg_3" height="161" width="20" y="330" x="349"
+                                fill="#FABA6F" />
+                        </g>
+                    </g>
+
+
+                    <script type="text/javascript">
+
+
+
+                    </script>
+                </svg>
+
+            </div>
+
+        </div>
+
+    </div>
+    <script>
+
+    </script>
+
+</body>
+
+</html>
