@@ -53,7 +53,7 @@
                         this.yStart = yStart;
                         this.yEnd = yEnd;
                         this.xBase = xBase;
-                        this.YBase = yBase;
+                        this.yBase = yBase;
                     }
                     isValid(selectedElement){
                         return selectedElement !== undefined && 
@@ -76,12 +76,12 @@
                     removeElement(selectedElement){
                         let index = this.elements.indexOf(selectedElement.id);
                         if(index >= 0){
-                            
                             this.elements.splice(this.elements.indexOf(selectedElement.id), 1);
                         }
                     }
                     translate(selectedElement){
-                        transform.setTranslate( 125+this.getIndex(selectedElement)*50, 660);
+                        transform.setTranslate(this.xBase + this.getIndex(selectedElement)*50, this.yBase );
+                        console.log("translate index:"+this.getIndex(selectedElement));
                         let index = this.elements.indexOf(selectedElement.id);
                         if (index === -1){
                             this.elements.push(selectedElement.id);                            
@@ -90,6 +90,8 @@
 
                 }
                 let leftWeightBox = new WeightBox(80,550,445,765, 125, 660);
+                let rightWeightBox = new WeightBox(1020,1500,475,765, 1075, 660);
+
                 let transform;
                  function makeDraggable(evt) {
                     let svg = evt.target;
@@ -158,9 +160,8 @@
 
                     function endDrag(evt) {
                         var coord = getMousePosition(evt);
-                        if(!leftWeightBox.isValid(selectedElement)){
+                        if(!leftWeightBox.isValid(selectedElement) && !rightWeightBox.isValid(selectedElement)){
                             selectedElement = false;
-                            console.log("not valid")
                             return
                         }
 
@@ -169,9 +170,14 @@
                         if(leftWeightBox.isIn(coord.x, coord.y)){
                             console.log(leftWeightBox);
                             leftWeightBox.translate(selectedElement);
+                        }else if(rightWeightBox.isIn(coord.x, coord.y)){
+                            console.log(rightWeightBox);
+                            rightWeightBox.translate(selectedElement);
                         }else{
                             transform.setTranslate(selectedElement.getAttribute("initialx"),selectedElement.getAttribute("initialy"));
                             leftWeightBox.removeElement(selectedElement);
+                            rightWeightBox.removeElement(selectedElement);
+
                         }
                         selectedElement = false;
                     }
