@@ -30,7 +30,7 @@
                         <rect stroke-width="0" id="svg_1" height="289" width="26" y="139" x="155" stroke="#000"
                             fill="#8CD79F" />
                     </g>
-                    <g id="total_bar" transform="translate(0, 30)">
+                    <g id="total_bar" transform="translate(0, -52)">
                         <rect transform="rotate(1.84501 369.026 334.389)" stroke="#000" stroke-width="0" id="svg_4"
                             height="7.65829" width="24.4422" y="330.5598" x="356.80492" fill="#FABA6F" />
                         <rect stroke-width="0" stroke="#000" id="svg_3" height="161" width="20" y="330" x="349"
@@ -104,26 +104,44 @@
 
                 <script type="text/javascript">
                     const svg = document.getElementsByTagName("svg")[0];
-                    var interval = setInterval(fillCircles(32), 16);
 
-                    function fillCircles(count) {
-                        // TODO move to two loops which is more suitable for division algorithm
-
+                    async function fillCircles(count) {
                         var cx = 195.5;
-                        for (i = 1; i <= count; i++) {
-                            // TODO fix second row first element
-                            // 18 multiplier since radius is 8
-                            const cy = 399.5 - 18 * (Math.floor((i - 1) / 10));
-                            const translateX =  18 * (9-(i - 1) % 10) - 18;
-                            const translateAngle = -0.25 * ((i - 1) % 10) - 0.25;
-                            const circle = new Circle("circle_" + i, 8, cy, cx, translateX, translateAngle).createSVG();
-                            setTimeout(function timer() {
-                                svg.appendChild(circle);
-                            }, i * 100);
+                        let rowCount = count / 10;
+                        for (let row = 1; row <= rowCount + 1; row++) {
+                            for (let col = 10; col >= 1; col--) {
+                                if (row > rowCount && (10 - col) >= count % 10) break;
+                                const cy = 417.5 - 18 * row;
+                                const translateX = 18 * (col - 1) - 18;
+                                const translateAngle = -0.25 * (10 - col) - 0.25;
+                                const circle = new Circle("circle_" + row * 10 + col, 8, cy, cx, translateX,
+                                    translateAngle).createSVG();
+                                setTimeout(function timer() {
+                                    svg.appendChild(circle);
+                                }, ((row - 1) * 10 + 10 - col) * 100);
+                            }
                         }
-
-
                     }
+                    async function moveBall(id) {
+                        let moving = document.getElementById("circle_409");
+
+                        if(moving === null){
+                            await new Promise(r => setTimeout(r, 2000));
+                            moveBall(id);
+                            return;
+                        }
+                        for (let j = 1; j <= 100; j++) {
+                            setTimeout(function timer() {
+                                moving.setAttribute("cx", parseFloat(moving.getAttribute("cx")) + j * 0.2);
+                                if ( j > 30){
+                                    moving.setAttribute("cy", parseFloat(moving.getAttribute("cy")) + j * 0.2);
+                                }
+                            }, j*30)
+                        }
+                    }
+                    fillCircles(32).then((success) => {
+                        moveBall(12);
+                    });
                 </script>
             </svg>
 
@@ -138,13 +156,13 @@
                         <g id="svg_9">
                             <rect transform="rotate(2.82952 401.491 390.741)" stroke-width="0" id="svg_7" height="26"
                                 width="232" y="415" x="156" stroke="#000" fill="#8CD79F"></rect>
-                             <rect stroke="#000" stroke-width="0" id="svg_6" height="50.37964" width="26" y="370" x="155"
+                            <rect stroke="#000" stroke-width="0" id="svg_6" height="50.37964" width="26" y="370" x="155"
                                 fill="#8CD79F"></rect>
                         </g>
                         <g id="total_div_bar" transform="translate(0, 30)">
                             <rect transform="rotate(1.84501 492.689 375.82)" stroke="#000" stroke-width="0" id="svg_4"
                                 height="7.65829" width="24.4422" y="384" x="355" fill="#FABA6F"></rect>
-                             <rect stroke="#000" stroke-width="0" id="svg_3" height="48.58636" width="20" y="380" x="349"
+                            <rect stroke="#000" stroke-width="0" id="svg_3" height="48.58636" width="20" y="380" x="349"
                                 fill="#FABA6F"></rect>
                         </g>
                     </g>
@@ -189,7 +207,8 @@
                                 let animationMove = (100 - count * 10) * j / (count * 10);
                                 setTimeout(function timer() {
                                     console.log("an:" + animationMove + " ypos:" + (70 - j / 10));
-                                    total_div_bar.setAttribute('transform', "translate(" + -1.583 *animationMove + "," + (20 - j / 10) + ")")
+                                    total_div_bar.setAttribute('transform', "translate(" + -1.583 *
+                                        animationMove + "," + (20 - j / 10) + ")")
                                 }, j * 16);
                             }
                         }
@@ -254,7 +273,7 @@
 
     </div>
     <script>
-
+        let containerBalls = [];
     </script>
 
 </body>
