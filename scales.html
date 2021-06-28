@@ -58,8 +58,8 @@
                     }
                     isValid(selectedElement){
                         return selectedElement !== undefined && 
-                        selectedElement.parentNode !== undefined &&  
-                        selectedElement.parentNode.id === "weight_group";
+                        selectedElement.getAttribute && 
+                        selectedElement.getAttribute("initialX") !== undefined
                     }
 
                     isIn(xPos, yPos){
@@ -96,6 +96,7 @@
                 }
                 let leftWeightBox = new WeightBox(80,550,445,765, 125, 660);
                 let rightWeightBox = new WeightBox(1020,1500,475,765, 1075, 660);
+                let currentStatus = 0;
 
                 let transform;
                  function makeDraggable(evt) {
@@ -176,18 +177,38 @@
                             console.log(leftWeightBox);
                             leftWeightBox.translate(selectedElement);
                             rightWeightBox.removeElement(selectedElement);
+                            document.getElementById("left_box_group").appendChild(document.getElementById(selectedElement.id));
                         }else if(rightWeightBox.isIn(coord.x, coord.y)){
                             console.log(rightWeightBox);
                             rightWeightBox.translate(selectedElement);
                             leftWeightBox.removeElement(selectedElement);
+                            document.getElementById("right_box_group").appendChild(document.getElementById(selectedElement.id));
                         }else{
                             transform.setTranslate(selectedElement.getAttribute("initialx"),selectedElement.getAttribute("initialy"));
                             leftWeightBox.removeElement(selectedElement);
                             rightWeightBox.removeElement(selectedElement);
+                            document.getElementById("weight_group").appendChild(document.getElementById(selectedElement.id));
+
                         }
                         leftWeightBox.calculateTotal();
                         rightWeightBox.calculateTotal();
                         selectedElement = false;
+                        if(leftWeightBox.total > rightWeightBox.total){
+                            if(currentStatus !== 1){
+                                setUpper(currentStatus);
+                            }
+                            currentStatus = 1;
+                            return;
+                        }else if (rightWeightBox.total > leftWeightBox.total){
+                            if(currentStatus !==2){
+                                setLower(currentStatus);
+                            }
+                            currentStatus = 2;
+                            return;
+                        }else{
+                            balance(currentStatus);
+                            currentStatus = 0;
+                        }
                     }
                 }
             </script>
@@ -347,9 +368,7 @@
 
         setPositions(leftYCoord, rightYCoord, degree);
 
-        //setUpper();
-
-        function setUpper() {
+        function setUpper(current) {
             setTimeout(function () {
                 leftYCoord += 4;
                 rightYCoord = -1 * leftYCoord;
@@ -357,14 +376,26 @@
                 setPositions(leftYCoord, rightYCoord, degree)
                 if (leftYCoord < 80) {
                     setUpper();
-                } else {
-                    setLower();
-                }
+                } 
+            }, 16);
+
+        };
+        function balance(current) {
+            if(current === 0) return;
+            setTimeout(function () {
+                let mult = current === 1 ? -1 : 1;
+                leftYCoord += 4*mult;
+                rightYCoord = -1 * leftYCoord*mult;
+                degree -= 0.5*mult;
+                setPositions(leftYCoord, rightYCoord, degree)
+                if (leftYCoord !== 0) {
+                    balance(current);
+                } 
             }, 16);
 
         };
 
-        function setLower() {
+        function setLower(current) {
             setTimeout(function () {
                 leftYCoord -= 4;
                 rightYCoord = -1 * leftYCoord;
@@ -372,9 +403,7 @@
                 setPositions(leftYCoord, rightYCoord, degree)
                 if (leftYCoord > -80) {
                     setLower();
-                } else {
-                    setUpper();
-                }
+                } 
             }, 16);
 
         };
