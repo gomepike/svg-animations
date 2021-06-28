@@ -54,6 +54,7 @@
                         this.yEnd = yEnd;
                         this.xBase = xBase;
                         this.yBase = yBase;
+                        this.total = 0;
                     }
                     isValid(selectedElement){
                         return selectedElement !== undefined && 
@@ -65,8 +66,8 @@
                         return xPos > this.xStart && xPos < this.xEnd && yPos > this.yStart && yPos < this.yEnd;
                     }
 
-                    getIndex(element){
-                        let index = this.elements.indexOf(element.id);
+                    getIndex(selectedElement){
+                        let index =  this.elements.findIndex(e=>e.id === selectedElement.id);
                         console.log("index:"+index)
                         if(index >= 0){
                             return index;
@@ -74,18 +75,22 @@
                         return this.elements.length;
                     }
                     removeElement(selectedElement){
-                        let index = this.elements.indexOf(selectedElement.id);
+                        let index =  this.elements.findIndex(e=>e.id === selectedElement.id);
                         if(index >= 0){
-                            this.elements.splice(this.elements.indexOf(selectedElement.id), 1);
+                            this.elements.splice( this.elements.findIndex(e=>e.id === selectedElement.id), 1);
                         }
                     }
                     translate(selectedElement){
                         transform.setTranslate(this.xBase + this.getIndex(selectedElement)*50, this.yBase );
                         console.log("translate index:"+this.getIndex(selectedElement));
-                        let index = this.elements.indexOf(selectedElement.id);
+                        let index = this.elements.findIndex(e=>e.id === selectedElement.id);
                         if (index === -1){
-                            this.elements.push(selectedElement.id);                            
+                            this.elements.push({id: selectedElement.id, value: parseInt(selectedElement.getAttribute("value"))});                            
                         }
+                    }
+                    calculateTotal(){
+                        this.total = this.elements.reduce((n, {value}) => n + value, 0);
+                        console.log("total:"+this.total);
                     }
 
                 }
@@ -170,15 +175,18 @@
                         if(leftWeightBox.isIn(coord.x, coord.y)){
                             console.log(leftWeightBox);
                             leftWeightBox.translate(selectedElement);
+                            rightWeightBox.removeElement(selectedElement);
                         }else if(rightWeightBox.isIn(coord.x, coord.y)){
                             console.log(rightWeightBox);
                             rightWeightBox.translate(selectedElement);
+                            leftWeightBox.removeElement(selectedElement);
                         }else{
                             transform.setTranslate(selectedElement.getAttribute("initialx"),selectedElement.getAttribute("initialy"));
                             leftWeightBox.removeElement(selectedElement);
                             rightWeightBox.removeElement(selectedElement);
-
                         }
+                        leftWeightBox.calculateTotal();
+                        rightWeightBox.calculateTotal();
                         selectedElement = false;
                     }
                 }
@@ -248,7 +256,7 @@
             </g>
 
             <g id="weight_group">
-                <path id="three_one" initialX="1200" initialY="1200" class="draggable" transform="translate(1200,1200) scale(0.2)" d="M188.617,112.135V85.216c25.673-3.653,43.213-9.586,45.168-16.372c0,0,0-47.308,0-47.386
+                <path id="three_one" value="3" initialX="1200" initialY="1200" class="draggable" transform="translate(1200,1200) scale(0.2)" d="M188.617,112.135V85.216c25.673-3.653,43.213-9.586,45.168-16.372c0,0,0-47.308,0-47.386
 		C233.785,9.608,186.898,0,129.057,0C71.217,0,24.344,9.608,24.344,21.459c0,0.078,0,47.386,0,47.386
 		c1.953,6.786,19.482,12.719,45.151,16.364v26.927C28.407,116.843,0.333,126.242,0.333,137.1v0.008v311.869
 		c0,15.566,57.64,28.183,128.724,28.183c71.104,0,128.741-12.617,128.741-28.183V137.108V137.1
@@ -261,7 +269,7 @@
 		c22.055,0,34.277,11.587,34.277,25.717c0,10.951-6.189,19.529-18.894,23.972v0.318c12.395,2.218,22.384,11.586,22.384,25.081
 		C165.585,348.102,149.565,361.434,123.364,361.434z" />
 
-                <path id="three_two" initialX="1250" initialY="1200"  class="draggable" transform="translate(1250,1200) scale(0.2)" d="M188.617,112.135V85.216c25.673-3.653,43.213-9.586,45.168-16.372c0,0,0-47.308,0-47.386
+                <path id="three_two" value="3" initialX="1250" initialY="1200"  class="draggable" transform="translate(1250,1200) scale(0.2)" d="M188.617,112.135V85.216c25.673-3.653,43.213-9.586,45.168-16.372c0,0,0-47.308,0-47.386
 		C233.785,9.608,186.898,0,129.057,0C71.217,0,24.344,9.608,24.344,21.459c0,0.078,0,47.386,0,47.386
 		c1.953,6.786,19.482,12.719,45.151,16.364v26.927C28.407,116.843,0.333,126.242,0.333,137.1v0.008v311.869
 		c0,15.566,57.64,28.183,128.724,28.183c71.104,0,128.741-12.617,128.741-28.183V137.108V137.1
@@ -274,7 +282,7 @@
 		c22.055,0,34.277,11.587,34.277,25.717c0,10.951-6.189,19.529-18.894,23.972v0.318c12.395,2.218,22.384,11.586,22.384,25.081
 		C165.585,348.102,149.565,361.434,123.364,361.434z" />
 
-                <path id="one_one"  initialX="1260" initialY="1200"  class="draggable" transform="translate(1260,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
+                <path id="one_one" value="1"  initialX="1260" initialY="1200"  class="draggable" transform="translate(1260,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
 		c0-8.399-33.225-15.208-74.204-15.208c-40.996,0-74.221,6.809-74.221,15.208c0,0.054,0,33.581,0,33.581
 		c1.381,4.816,13.807,9.019,32.001,11.601v19.08c-29.115,3.334-49.031,10.004-49.031,17.698v221.037
 		c0,11.036,40.857,19.978,91.251,19.978c50.38,0,91.234-8.942,91.234-19.978V236.145
@@ -283,7 +291,7 @@
 		c-1.969-0.97-3.396-2.777-3.86-4.925c-0.728-3.288,0.93-6.639,3.986-8.066l14.734-6.855c1.241-0.574,2.574-0.869,3.939-0.869h4.608
 		c5.148,0,9.336,4.18,9.336,9.337V374.176z" />
 
-                <path id="one_two"  initialX="1285" initialY="1200"  class="draggable" transform="translate(1285,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
+                <path id="one_two" value="1"  initialX="1285" initialY="1200"  class="draggable" transform="translate(1285,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
 		c0-8.399-33.225-15.208-74.204-15.208c-40.996,0-74.221,6.809-74.221,15.208c0,0.054,0,33.581,0,33.581
 		c1.381,4.816,13.807,9.019,32.001,11.601v19.08c-29.115,3.334-49.031,10.004-49.031,17.698v221.037
 		c0,11.036,40.857,19.978,91.251,19.978c50.38,0,91.234-8.942,91.234-19.978V236.145
@@ -292,7 +300,7 @@
 		c-1.969-0.97-3.396-2.777-3.86-4.925c-0.728-3.288,0.93-6.639,3.986-8.066l14.734-6.855c1.241-0.574,2.574-0.869,3.939-0.869h4.608
 		c5.148,0,9.336,4.18,9.336,9.337V374.176z" />
 
-                <path id="one_three"  initialX="1310" initialY="1200"  class="draggable" transform="translate(1310,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
+                <path id="one_three" value="1"  initialX="1310" initialY="1200"  class="draggable" transform="translate(1310,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
 		c0-8.399-33.225-15.208-74.204-15.208c-40.996,0-74.221,6.809-74.221,15.208c0,0.054,0,33.581,0,33.581
 		c1.381,4.816,13.807,9.019,32.001,11.601v19.08c-29.115,3.334-49.031,10.004-49.031,17.698v221.037
 		c0,11.036,40.857,19.978,91.251,19.978c50.38,0,91.234-8.942,91.234-19.978V236.145
@@ -301,7 +309,7 @@
 		c-1.969-0.97-3.396-2.777-3.86-4.925c-0.728-3.288,0.93-6.639,3.986-8.066l14.734-6.855c1.241-0.574,2.574-0.869,3.939-0.869h4.608
 		c5.148,0,9.336,4.18,9.336,9.337V374.176z" />
 
-                <path id="one_four"  initialX="1335" initialY="1200"  class="draggable" transform="translate(1335,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
+                <path id="one_four" value="1"  initialX="1335" initialY="1200"  class="draggable" transform="translate(1335,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
 		c0-8.399-33.225-15.208-74.204-15.208c-40.996,0-74.221,6.809-74.221,15.208c0,0.054,0,33.581,0,33.581
 		c1.381,4.816,13.807,9.019,32.001,11.601v19.08c-29.115,3.334-49.031,10.004-49.031,17.698v221.037
 		c0,11.036,40.857,19.978,91.251,19.978c50.38,0,91.234-8.942,91.234-19.978V236.145
