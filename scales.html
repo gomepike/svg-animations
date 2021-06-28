@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Scales An</title>
+    <title>Scales</title>
 
     <style>
         #left_hand {
@@ -68,7 +68,6 @@
 
                     getIndex(selectedElement){
                         let index =  this.elements.findIndex(e=>e.id === selectedElement.id);
-                        console.log("index:"+index)
                         if(index >= 0){
                             return index;
                         }
@@ -81,8 +80,9 @@
                         }
                     }
                     translate(selectedElement){
-                        transform.setTranslate(this.xBase + this.getIndex(selectedElement)*50, this.yBase );
                         console.log("translate index:"+this.getIndex(selectedElement));
+                        console.log("translate value:"+ (this.xBase + this.getIndex(selectedElement)*50) +" y:" +this.yBase);
+                        transform.setTranslate(this.xBase + this.getIndex(selectedElement)*50, this.yBase );
                         let index = this.elements.findIndex(e=>e.id === selectedElement.id);
                         if (index === -1){
                             this.elements.push({id: selectedElement.id, value: parseInt(selectedElement.getAttribute("value"))});                            
@@ -90,7 +90,6 @@
                     }
                     calculateTotal(){
                         this.total = this.elements.reduce((n, {value}) => n + value, 0);
-                        console.log("total:"+this.total);
                     }
 
                 }
@@ -164,22 +163,34 @@
                         }
                     }
 
+                    function moveBoxes(){
+                        leftWeightBox.calculateTotal();
+                        rightWeightBox.calculateTotal();
+
+                        if(leftWeightBox.total > rightWeightBox.total){
+                            setUpper(currentStatus);
+                            currentStatus = 1;
+                        }else if (rightWeightBox.total > leftWeightBox.total){
+                            setLower(currentStatus);
+                            currentStatus = 2;
+                        }else{
+                            balance(currentStatus);
+                            currentStatus = 0;
+                        }
+                    }
+                    
                     function endDrag(evt) {
                         var coord = getMousePosition(evt);
                         if(!leftWeightBox.isValid(selectedElement) && !rightWeightBox.isValid(selectedElement)){
                             selectedElement = false;
                             return
                         }
-
-                        console.log("valid")
-
+ 
                         if(leftWeightBox.isIn(coord.x, coord.y)){
-                            console.log(leftWeightBox);
                             leftWeightBox.translate(selectedElement);
                             rightWeightBox.removeElement(selectedElement);
                             document.getElementById("left_box_group").appendChild(document.getElementById(selectedElement.id));
                         }else if(rightWeightBox.isIn(coord.x, coord.y)){
-                            console.log(rightWeightBox);
                             rightWeightBox.translate(selectedElement);
                             leftWeightBox.removeElement(selectedElement);
                             document.getElementById("right_box_group").appendChild(document.getElementById(selectedElement.id));
@@ -188,27 +199,9 @@
                             leftWeightBox.removeElement(selectedElement);
                             rightWeightBox.removeElement(selectedElement);
                             document.getElementById("weight_group").appendChild(document.getElementById(selectedElement.id));
-
                         }
-                        leftWeightBox.calculateTotal();
-                        rightWeightBox.calculateTotal();
                         selectedElement = false;
-                        if(leftWeightBox.total > rightWeightBox.total){
-                            if(currentStatus !== 1){
-                                setUpper(currentStatus);
-                            }
-                            currentStatus = 1;
-                            return;
-                        }else if (rightWeightBox.total > leftWeightBox.total){
-                            if(currentStatus !==2){
-                                setLower(currentStatus);
-                            }
-                            currentStatus = 2;
-                            return;
-                        }else{
-                            balance(currentStatus);
-                            currentStatus = 0;
-                        }
+                        moveBoxes();
                     }
                 }
             </script>
@@ -369,6 +362,7 @@
         setPositions(leftYCoord, rightYCoord, degree);
 
         function setUpper(current) {
+            if(current === 1) return;
             setTimeout(function () {
                 leftYCoord += 4;
                 rightYCoord = -1 * leftYCoord;
@@ -385,7 +379,7 @@
             setTimeout(function () {
                 let mult = current === 1 ? -1 : 1;
                 leftYCoord += 4*mult;
-                rightYCoord = -1 * leftYCoord*mult;
+                rightYCoord = -1 * leftYCoord;
                 degree -= 0.5*mult;
                 setPositions(leftYCoord, rightYCoord, degree)
                 if (leftYCoord !== 0) {
@@ -396,6 +390,7 @@
         };
 
         function setLower(current) {
+            if(current === 2) return;
             setTimeout(function () {
                 leftYCoord -= 4;
                 rightYCoord = -1 * leftYCoord;
