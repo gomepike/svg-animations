@@ -1,0 +1,239 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Divisor Machine</title>
+
+    <style>
+        #left_hand {
+            transform-origin: 50% 10%;
+        }
+
+        #right_hand {
+            transform-origin: 50% 10%;
+        }
+
+        .container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "Main . ."
+    "Main . ."
+    "Main . .";
+}
+
+.Main {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 0.2fr 1fr 1.8fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    ". . ."
+    "L1 L2 ."
+    "L1 L3 ."
+    ". L4 .";
+  grid-area: Main;
+}
+
+.L1 { grid-area: L1; }
+
+.L2 { grid-area: L2; }
+
+.L3 { grid-area: L3; }
+
+.L4 { grid-area: L4; }
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="Main">
+        <div class="L1">
+            <svg width="800" height="1000" transform="translate(0,-100)" xmlns="http://www.w3.org/2000/svg">
+                <g id="dividend_box">
+                    <title>Dividend</title>
+                    <g id="dividend_case">
+                        <rect transform="rotate(2.82952 273 420)" stroke-width="0" id="svg_2" height="26" width="232"
+                            y="407" x="157" stroke="#000" fill="#8CD79F" />
+                        <rect stroke-width="0" id="svg_1" height="289" width="26" y="139" x="155" stroke="#000"
+                            fill="#8CD79F" />
+                    </g>
+                    <g id="dividend_bar" transform="translate(0, -52)">
+                        <rect transform="rotate(1.84501 369.026 334.389)" stroke="#000" stroke-width="0" id="svg_4"
+                            height="7.65829" width="24.4422" y="330.5598" x="356.80492" fill="#FABA6F" />
+                        <rect stroke-width="0" stroke="#000" id="svg_3" height="161" width="20" y="330" x="349"
+                            fill="#FABA6F" />
+                    </g>
+                </g>
+                <g id="divisor_box" transform="translate(300,-200)">
+                    <title>Divisor</title>
+                    <g id="divisor_case">
+                        <rect transform="rotate(2.82952 401.491 390.741)" stroke-width="0" id="svg_7" height="26"
+                            width="232" y="415" x="156" stroke="#000" fill="#8CD79F"></rect>
+                        <rect stroke="#000" stroke-width="0" id="svg_6" height="50.37964" width="26" y="370" x="155"
+                            fill="#8CD79F"></rect>
+                    </g>
+                    <g id="divisor_bar" transform="translate(0, 20)">
+                        <rect transform="rotate(1.84501 492.689 375.82)" stroke="#000" stroke-width="0" id="svg_4"
+                            height="7.65829" width="24.4422" y="384" x="355" fill="#FABA6F"></rect>
+                        <rect stroke="#000" stroke-width="0" id="svg_3" height="48.58636" width="20" y="380" x="349"
+                            fill="#FABA6F"></rect>
+                    </g>
+                </g>
+                <g id="quotient_box" transform="translate(300,150)">
+                    <title>Quotient</title>
+                    <g id="quotient_case">
+                        <rect transform="rotate(2.82952 273 420)" stroke-width="0" id="svg_2" height="26"
+                            width="232" y="407" x="157" stroke="#000" fill="#8CD79F" />
+                        <rect stroke-width="0" transform="translate(2,200) scale(1,0.5)" id="svg_1" height="289" width="26" y="139" x="155" stroke="#000"
+                            fill="#8CD79F" />
+                    </g>
+                    <g id="quotient_bar" transform="translate(0, 30)">
+                        <rect transform="rotate(1.84501 369.026 334.389)" stroke="#000" stroke-width="0" id="svg_4"
+                            height="7.65829" width="24.4422" y="330.5598" x="356.80492" fill="#FABA6F" />
+                        <rect stroke-width="0" stroke="#000" id="svg_3" height="161" width="20" y="330" x="349"
+                            fill="#FABA6F" />
+                    </g>
+                </g>
+                <g id="remainder_box" transform="translate(300,400)">
+                    <title>Remainder</title>
+                    <g id="remainder_case">
+                        <rect transform="rotate(2.82952 401.491 390.741)" stroke-width="0" id="svg_7" height="26"
+                            width="232" y="415" x="156" stroke="#000" fill="#8CD79F"></rect>
+                        <rect stroke="#000" stroke-width="0" id="svg_6" height="50.37964" width="26" y="370" x="155"
+                            fill="#8CD79F"></rect>
+                    </g>
+                    <g id="remainder_bar" transform="translate(0, 20)">
+                        <rect transform="rotate(1.84501 492.689 375.82)" stroke="#000" stroke-width="0" id="svg_4"
+                            height="7.65829" width="24.4422" y="384" x="355" fill="#FABA6F"></rect>
+                        <rect stroke="#000" stroke-width="0" id="svg_3" height="48.58636" width="20" y="380" x="349"
+                            fill="#FABA6F"></rect>
+                    </g>
+                </g>
+                <script type="text/javascript">
+                    // TODO class container
+                    // TODO class carrier 
+
+                    // TODO path for animation (pipe)
+                    // main-divider path quarter circle
+                    // divider-remainder path (z)
+
+                    class Circle {
+                        constructor(id, r, cy, cx, translateX, translateAngle) {
+                            this.rx = r;
+                            this.ry = r;
+                            this.stroke = "#000";
+                            this.fill = "#CE7975"
+                            this.id = id;
+                            this.cx = cx;
+                            this.cy = cy;
+                            this.strokeWidth = 0;
+                            this.translateX = translateX;
+                            this.translateAngle = translateAngle;
+                            this.svg = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+                        }
+
+                        createSVG() {
+                            this.svg.setAttribute('stroke', this.stroke);
+                            this.svg.setAttribute('ry', this.ry);
+                            this.svg.setAttribute('rx', this.rx);
+                            this.svg.setAttribute('stroke-width', this.strokeWidth);
+                            this.svg.setAttribute('fill', this.fill);
+                            this.svg.setAttribute('id', this.id);
+                            this.svg.setAttribute('cy', this.cy);
+                            this.svg.setAttribute('cx', this.cx);
+                            this.svg.setAttribute('transform', "translate(" + this.translateX + ", 1) rotate(" +
+                                this.translateAngle + ")");
+                            return this.svg;
+                        }
+
+                        moveOuterCircle(toX, toY) {
+                            for (i = 0; i <= 100; i++) {
+                                // TODO set circular x - y
+                                this.svg.setAttribute('cy', this.cy);
+                                this.svg.setAttribute('cx', this.cx);
+                                this.svg.setAttribute('transform', "translate(" + this.translateX + ", 1) rotate(" +
+                                    this.translateAngle + ")");
+                                setTimeout(function timer() {
+                                    svg.appendChild(circle);
+                                }, i * 10);
+                            }
+                        }
+
+                        dropLower(toY) {
+                            for (i = 0; i <= 100; i++) {
+
+                                this.svg.setAttribute('cy', this.cy);
+                                this.svg.setAttribute('cx', this.cx);
+                                this.svg.setAttribute('transform', "translate(" + toY + ");");
+                                setTimeout(function timer() {
+                                    svg.appendChild(circle);
+                                }, i * 10);
+                            }
+                        }
+                    }
+                </script>
+
+
+                <script type="text/javascript">
+                    const svg = document.getElementsByTagName("svg")[0];
+
+                    async function fillCircles(count) {
+                        var cx = 195.5;
+                        let rowCount = count / 10;
+                        for (let row = 1; row <= rowCount + 1; row++) {
+                            for (let col = 10; col >= 1; col--) {
+                                if (row > rowCount && (10 - col) >= count % 10) break;
+                                const cy = 417.5 - 18 * row;
+                                const translateX = 18 * (col - 1) - 18;
+                                const translateAngle = -0.25 * (10 - col) - 0.25;
+                                const circle = new Circle("circle_" + row * 10 + col, 8, cy, cx, translateX,
+                                    translateAngle).createSVG();
+                                setTimeout(function timer() {
+                                    svg.appendChild(circle);
+                                }, ((row - 1) * 10 + 10 - col) * 100);
+                            }
+                        }
+                    }
+                    async function moveBall(id) {
+                        let moving = document.getElementById("circle_409");
+
+                        if(moving === null){
+                            await new Promise(r => setTimeout(r, 2000));
+                            moveBall(id);
+                            return;
+                        }
+                        for (let j = 1; j <= 100; j++) {
+                            setTimeout(function timer() {
+                                moving.setAttribute("cx", parseFloat(moving.getAttribute("cx")) + j * 0.2);
+                                if ( j > 30){
+                                    moving.setAttribute("cy", parseFloat(moving.getAttribute("cy")) + j * 0.2);
+                                }
+                            }, j*30)
+                        }
+                    }
+                    fillCircles(32).then((success) => {
+                        moveBall(12);
+                    });
+                </script>
+            </svg>
+        </div>
+        <div class="L2">
+
+
+        </div>
+        <div class="L3"></div>
+        <div class="L4"></div>
+        </div>
+    </div>
+</body>
+
+</html>
