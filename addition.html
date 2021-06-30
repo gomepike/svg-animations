@@ -1,0 +1,116 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Scales</title>
+
+    <style>
+       
+        #left_hand {
+            transform-origin: 50% 10%;
+        }
+
+        #right_hand {
+            transform-origin: 50% 10%;
+        }
+ 
+    </style>
+</head>
+
+<body>
+    <div id="mainDiv" style="width: 50%; height: auto;">
+        <svg width="276.99999999999994" height="280.99999999999994" xmlns="http://www.w3.org/2000/svg">
+            <g id="Layer_1">
+             <title>Layer 1</title>
+             <path id="svg_8" d="m29.00795,213.6768l76.2,-176.99999l101.79999,0l-68.2,178.99999l-109.79999,-2z" stroke="#000" fill="#fdffde"/>
+             <path fill="white" stroke="#000" opacity="NaN" d="m267.60498,280.60669" id="svg_9"/>
+             <g id="svg_21">
+              <path stroke="#000" id="svg_1" d="m143.04865,86.28779l14.69171,-38.27162l40.60562,0l-14.87006,38.33333l-40.42727,-0.0617l0,-0.00001z" fill="white"/>
+              <line id="svg_13" y2="85.72961" x2="155.92637" y1="48.02467" x1="170.68047" stroke="#000" fill="none"/>
+              <line id="svg_17" y2="86.05748" x2="170.3526" y1="48.35254" x1="185.10671" stroke="#000" fill="none"/>
+              <line stroke="#000" id="svg_19" y2="61.87468" x2="193.24975" y1="61.37468" x1="152.24979" fill="none"/>
+              <line id="svg_20" y2="73.49942" x2="188.87485" y1="72.99942" x1="147.87489" stroke="#000" fill="none"/>
+             </g>
+             <g id="svg_27">
+              <path stroke="#000" id="svg_22" d="m123.42591,136.85407l14.69171,-38.27162l40.60562,0l-14.87007,38.33333l-40.42726,-0.06171z" fill="white"/>
+              <line id="svg_23" y2="136.29589" x2="136.30363" y1="98.59095" x1="151.05773" stroke="#000" fill="none"/>
+              <line id="svg_24" y2="136.62376" x2="150.72987" y1="98.91882" x1="165.48397" stroke="#000" fill="none"/>
+              <line stroke="#000" id="svg_25" y2="112.44097" x2="173.62701" y1="111.94097" x1="132.62705" fill="none"/>
+              <line id="svg_26" y2="124.0657" x2="169.25211" y1="123.5657" x1="128.25215" stroke="#000" fill="none"/>
+             </g>
+             <g id="svg_33">
+              <path stroke="#000" id="svg_28" d="m103.42581,187.79771l14.69171,-38.27162l40.60562,0l-14.87007,38.33333l-40.42726,-0.06171z" fill="white"/>
+              <line id="svg_29" y2="187.23953" x2="116.30353" y1="149.5346" x1="131.05764" stroke="#000" fill="none"/>
+              <line id="svg_30" y2="187.5674" x2="130.72977" y1="149.86246" x1="145.48387" stroke="#000" fill="none"/>
+              <line stroke="#000" id="svg_31" y2="163.38461" x2="153.62692" y1="162.88461" x1="112.62695" fill="none"/>
+              <line id="svg_32" y2="175.00934" x2="149.25202" y1="174.50934" x1="108.25205" stroke="#000" fill="none"/>
+             </g>
+             <g id="svg_39">
+              <path stroke="#000" id="svg_34" d="m50.218,187.79771l14.69171,-38.27162l40.60562,0l-14.87007,38.33333l-40.42726,-0.06171z" fill="white"/>
+              <line id="svg_35" y2="187.23953" x2="63.09573" y1="149.5346" x1="77.84983" stroke="#000" fill="none"/>
+              <line id="svg_36" y2="187.5674" x2="77.52196" y1="149.86246" x1="92.27607" stroke="#000" fill="none"/>
+              <line stroke="#000" id="svg_37" y2="163.38461" x2="100.41911" y1="162.88461" x1="59.41915" fill="none"/>
+              <line id="svg_38" y2="175.00934" x2="96.04421" y1="174.50934" x1="55.04425" stroke="#000" fill="none"/>
+             </g>
+            </g>
+           
+           </svg>
+    </div>
+
+    <script>
+        const leftBox = document.getElementById("left_box_group");
+        const leftHand = document.getElementById("left_hand");
+        const rightBox = document.getElementById("right_box_group");
+        const rightHand = document.getElementById("right_hand");
+
+        let leftYCoord = 0;
+        let rightYCoord = 0;
+        let degree = 0;
+
+        setPositions(leftYCoord, rightYCoord, degree);
+
+        function setUpper() {
+            setTimeout(function () {
+                leftYCoord += 4;
+                rightYCoord = -1 * leftYCoord;
+                degree -= 0.5;
+                setPositions(leftYCoord, rightYCoord, degree)
+                if (leftYCoord < 80) {
+                    setUpper();
+                } else {
+                    setLower();
+                }
+            }, 16);
+
+        };
+
+        function setLower() {
+            setTimeout(function () {
+                leftYCoord -= 4;
+                rightYCoord = -1 * leftYCoord;
+                degree += 0.5;
+                setPositions(leftYCoord, rightYCoord, degree)
+                if (leftYCoord > -80) {
+                    setLower();
+                } else {
+                    setUpper();
+                }
+            }, 16);
+
+        };
+
+        function setPositions(leftYCoord, rightYCoord, degree) {
+            leftBox.setAttribute('transform', 'translate( 0 ,' + leftYCoord + ')');
+            rightBox.setAttribute('transform', 'translate( 0 ,' + rightYCoord + ')');
+
+            leftHand.setAttribute('transform', ' rotate(' + degree + ')');
+            rightHand.setAttribute('transform', ' rotate(' + degree + ')');
+        }
+    </script>
+
+</body>
+
+</html>

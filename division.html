@@ -80,7 +80,7 @@
                                 fill="#FABA6F" />
                         </g>
                     </g>
-                    <g id="divisor_box" transform="translate(300,-200)">
+                    <g id="divisor_box" transform="translate(275,-200)">
                         <title>Divisor</title>
                         <g id="divisor_case">
                             <rect transform="rotate(2.82952 401.491 390.741)" stroke-width="0" id="svg_7" height="26"
@@ -95,7 +95,7 @@
                                 fill="#FABA6F"></rect>
                         </g>
                     </g>
-                    <g id="quotient_box" transform="translate(300,150)">
+                    <g id="quotient_box" transform="translate(275,180)">
                         <title>Quotient</title>
                         <g id="quotient_case">
                             <rect transform="rotate(2.82952 273 420)" stroke-width="0" id="svg_2" height="26"
@@ -110,7 +110,7 @@
                                 fill="#FABA6F" />
                         </g>
                     </g>
-                    <g id="remainder_box" transform="translate(300,400)">
+                    <g id="remainder_box" transform="translate(275,400)">
                         <title>Remainder</title>
                         <g id="remainder_case">
                             <rect transform="rotate(2.82952 401.491 390.741)" stroke-width="0" id="svg_7" height="26"
@@ -126,12 +126,9 @@
                         </g>
                     </g>
                     <script type="text/javascript">
-                        // TODO class container
                         // TODO class carrier 
 
                         // TODO path for animation (pipe)
-                        // main-divider path quarter circle
-                        // divider-remainder path (z)
 
                         class Container {
                             constructor(module) {
@@ -151,33 +148,62 @@
                             }
                             // drop y 16 (radius*2 of circles)
                             async lowerBar() {
-                                let maxMove = 76-Math.ceil(this.circles.length / 10) * 16;
+                                let maxMove = 76 - Math.ceil(this.circles.length / 10) * 16;
                                 let barId = this.bar;
                                 let currentBarPos = this.barPosition;
                                 await new Promise((resolve, reject) => {
                                     for (let i = 0; i <= 100; i++) {
-                                    setTimeout(function timer() {
-                                        document.getElementById(barId).setAttribute('transform',
-                                        "translate(0," + ( currentBarPos+(maxMove-currentBarPos) * 1.0 * i / 100) + ")");
-                                        if (i>=100) resolve()
-                                    }, i * 10);
-                                }});
+                                        setTimeout(function timer() {
+                                            document.getElementById(barId).setAttribute('transform',
+                                                "translate(0," + (currentBarPos + (maxMove -
+                                                    currentBarPos) * 1.0 * i / 100) + ")");
+                                            if (i >= 100) {
+                                                resolve(maxMove)
+                                            }
+                                        }, i * 10);
+                                    }
+                                }).then((maxMove) => {
+                                    this.barPosition = maxMove;
+                                });
+                            }
+
+                            // drop y 16 (radius*2 of circles)
+                            async lowerBarByOne() {
+                                let maxMove = 16;
+                                let barId = this.bar;
+                                let currentBarPos = this.barPosition;
+                                console.log(currentBarPos);
+
+                                await new Promise((resolve, reject) => {
+                                    for (let i = 0; i <= 100; i++) {
+                                        setTimeout(function timer() {
+                                            document.getElementById(barId).setAttribute('transform',
+                                                "translate(0," + (currentBarPos + maxMove *
+                                                    1.0 * i / 100) + ")");
+                                            if (i >= 100) resolve(currentBarPos + maxMove)
+                                        }, i * 10);
+                                    }
+                                }).then((newPos) => {
+                                    this.barPosition = newPos;
+                                });
                             }
                             // drop y 16 (radius*2 of circles)
-                            async squeezeBar() {
-                                let count = this.circles.length;
+                            async squeezeBar(size) {
+                                let count = size > 0 ? size : this.circles.length;
                                 console.log(this.circles);
                                 await new Promise((resolve, reject) => {
-                                for (let j = 1; j <= count * 10; j++) {
+                                    for (let j = 1; j <= count * 10; j++) {
 
-                                    let animationMove = (100 - count * 10) * j / (count * 10);
-                                    let divisorBar = document.getElementById(this.bar);
-                                    setTimeout(function timer() {
-                                        divisorBar.setAttribute('transform', "translate(" + -1.583 *
-                                            animationMove + "," + (20 - j / 10) + ")")
-                                            if (j >=count*10) resolve()
-                                    }, j * 16);
-                                }});
+                                        let animationMove = (100 - count * 10) * j / (count * 10);
+                                        let divisorBar = document.getElementById(this.bar);
+                                        setTimeout(function timer() {
+                                            divisorBar.setAttribute('transform', "translate(" + -
+                                                1.583 *
+                                                animationMove + "," + (20 - j / 10) + ")")
+                                            if (j >= count * 10) resolve()
+                                        }, j * 16);
+                                    }
+                                });
 
                             }
                         }
@@ -240,6 +266,8 @@
                         }
                         let dividentContainer = new Container("dividend");
                         let divisorContainer = new Container("divisor");
+                        let quotientContainer = new Container("quotient");
+                        let remainderContainer = new Container("remainder");
 
                         const svg = document.getElementsByTagName("svg")[0];
 
@@ -259,69 +287,94 @@
                                         setTimeout(function timer() {
                                             svg.appendChild(circle);
                                             dividentContainer.circles.push(circle);
-                                            if((row-1)*10+(11-col) >= count) resolve();
+                                            if ((row - 1) * 10 + (11 - col) >= count) resolve();
                                         }, ((row - 1) * 10 + 10 - col) * 100);
                                     }
 
                                 }
                             });
-                            
-                        }
-                        async function moveBall(id) {
-                            let moving = document.getElementById("circle_409");
 
-                            if (moving === null) {
-                                await new Promise(r => setTimeout(r, 2000));
-                                moveBall(id);
-                                return;
-                            }
-                            await new Promise((resolve,reject)=>{
-                                for (let j = 1; j <= 100; j++) {
-                                setTimeout(function timer() {
-                                    moving.setAttribute("cx", parseFloat(moving.getAttribute("cx")) + j *
-                                        0.2);
-                                    if (j > 30) {
-                                        moving.setAttribute("cy", parseFloat(moving.getAttribute("cy")) +
-                                            j * 0.2);
-                                    }
-                                    if (j>=100 ) resolve()
-                                }, j * 30)
-                            }});
                         }
-                        fillCircles(32).then((success) => {
-                            dividentContainer.lowerBar().then((success) => {
-                                moveBall(12)
+                        async function moveBall() {
+
+                            await new Promise((resolve, reject) => {
+                                let count = Math.ceil(dividentContainer.circles.length / 10);
+                                for (let i = 1; i <= count; i++) {
+                                    for (let j = 1; j <= 100; j++) {
+                                        setTimeout(function timer() {
+                                            let topCircles = dividentContainer.circles.slice(-1*(dividentContainer.circles.length%10));
+
+                                            for (moving of topCircles) {
+                                                moving.setAttribute("cx", parseFloat(moving
+                                                        .getAttribute("cx")) + j *
+                                                    0.2);
+                                                if (j > 20) {
+                                                    moving.setAttribute("cy", parseFloat(moving
+                                                            .getAttribute("cy")) +
+                                                        j * 0.2);
+                                                }
+                                                
+                                            }
+
+
+                                            if (j >= 100 && i >= count) resolve()
+                                        }, j * 30)
+                                    }
+                                    dividentContainer.lowerBarByOne()
+                                }
                             });
-                            
-                        });
+                        }
+
+
                         const dividerSvg = document.getElementById("divisor_case");
 
                         async function fillDivisor(count) {
                             // TODO move to two loops which is more suitable for division algorithm
 
                             var cx = 190;
-                            await new Promise((resolve,reject) => {
+                            await new Promise((resolve, reject) => {
                                 for (let i = 1; i <= count; i++) {
-                                // TODO fix second row first element
-                                // 18 multiplier since radius is 8
-                                const cy = 394 - 18 * (Math.floor((i - 1) / 10));
-                                const translateX = 18 * ((i - 1) % 10);
-                                const translateAngle = 0.12 * ((i - 1) % 10) + 0.12;
-                                const circle = new Circle("circle_" + i, 8, cy, cx, translateX, translateAngle)
-                                    .createSVG();
-                                setTimeout(function timer() {
-                                    dividerSvg.appendChild(circle);
-                                    divisorContainer.circles.push(circle);
-                                    console.log("running fill divisor");
-                                    if(i>=count)                                        resolve()
-                                }, i * 100);
-                                
-                            }});
+                                    // TODO fix second row first element
+                                    // 18 multiplier since radius is 8
+                                    const cy = 394 - 18 * (Math.floor((i - 1) / 10));
+                                    const translateX = 18 * ((i - 1) % 10);
+                                    const translateAngle = 0.12 * ((i - 1) % 10) + 0.12;
+                                    const circle = new Circle("circle_" + i, 8, cy, cx, translateX,
+                                            translateAngle)
+                                        .createSVG();
+                                    setTimeout(function timer() {
+                                        dividerSvg.appendChild(circle);
+                                        divisorContainer.circles.push(circle);
+                                        console.log("running fill divisor");
+                                        if (i >= count) resolve()
+                                    }, i * 100);
+
+                                }
+                            });
 
                         }
-                        fillDivisor(4).then((success) =>{
+
+                        async function spill() {
+                            dividentContainer.lowerBar();
+                        }
+
+                        fillCircles(12).then((success) => {
+                            dividentContainer.lowerBar();
+                        });
+
+                        fillDivisor(4).then((success) => {
                             console.log("running squeezeBar");
-                            divisorContainer.squeezeBar()
+                            return divisorContainer.squeezeBar(divisorContainer.circles.length);
+                        }).then(() => {
+                            return quotientContainer.squeezeBar(divisorContainer.circles.length);
+
+                        }).then(() => {
+                            return remainderContainer.squeezeBar(divisorContainer.circles.length);
+
+                        }).then(() => {
+                            return dividentContainer.lowerBarByOne()
+                        }).then(() => {
+                            moveBall()
                         });
                     </script>
 
