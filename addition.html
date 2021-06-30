@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
 
-    <title>Scales</title>
+    <title>Addition</title>
 
     <style>
 
@@ -16,7 +16,7 @@
 
 <body>
     <div id="mainDiv" style="width: 50%; height: auto;">
-        <svg id="addition_case" width="276.99999999999994" height="280.99999999999994"
+        <svg id="addition_case" viewBox="0 0 600 900" preserveAspectRatio="none" width="1600" height="1600"
             xmlns="http://www.w3.org/2000/svg">
 
             <g id="Layer_1">
@@ -100,7 +100,24 @@
                         id="svg_518" fill="#ff0026" stroke-width="0.3" stroke="#ffffff" />
                 </g>
             </g>
+            <text id="firstBoxText" visibility="hidden" x="200" y="75" class="heavy">0</text>
+            <text id="secondBoxText" visibility="hidden"   x="180" y="125" class="heavy">0</text>
+            <text id="totalBoxText" visibility="hidden"   x="115" y="205" class="heavy">0</text>
+            <text id="carryBoxText"  visibility="hidden"  x="65" y="205" class="heavy">0</text>
+            <text id="finalText"  visibility="hidden"  x="150" y="205" class="heavy">0</text>
 
+            <g id="firstBoxSvg">
+
+            </g>
+            <g id="secondBoxSvg">
+
+            </g>
+            <g id="totalBoxSvg">
+
+            </g>
+            <g id="carryBoxSvg">
+
+            </g>
         </svg>
     </div>
 
@@ -112,32 +129,56 @@
                 this.id = id;
                 this.xPositions = xPositions;
                 this.yPositions = yPositions;
+                this.value = 0;
                 this.color = "#ff0026"
             }
-           async fillBox(count) {
+            async fillBox(count) {
                 var copy = this;
-
+                this.value = count;
                 await new Promise((resolve, reject) => {
                     for (let i = 0; i < count; i++) {
                         setTimeout(function timer() {
                             var clone = originalBar.cloneNode(true); // "deep" clone
-                            clone.id = copy.id+"_bar_" + i;
-
+                            clone.id = copy.id + "_bar_" + i;
                             let floor = Math.floor(i / 9);
                             let line = Math.floor(i / 3) % 3;
-                            console.log(clone.querySelectorAll("path"));
-                            
+                            if (copy.color !== "ff0026") copy.setColor(clone);
+
                             clone.setAttribute("transform", "translate(" + (i % 3 * 14 + copy
                                 .xPositions[line]) + "," + (copy.yPositions[line] - 12 *
                                 floor) + ")");
                             clone.setAttribute("visibility", "visible");
-                            document.getElementById("addition_case").appendChild(clone);
-                            if (i === count-1) resolve();
+                            document.getElementById(copy.id + "Svg").appendChild(clone);
+                            document.getElementById(copy.id + "Text").textContent = i+1;
+
+                            if (i === count - 1) resolve();
                         }, i * 300);
                     }
                 })
+            }
+            async setColor(clone) {
+                let paths = clone.querySelectorAll("path");
+                clone.querySelectorAll("rect")[0].setAttribute("fill", this.color);
+                for (let j = 0; j < paths.length; j++) {
+                    paths[j].setAttribute('fill', this.color);
+                }
+            }
 
-
+            async showNumber(){
+                document.getElementById(this.id + "Text").setAttribute("visibility", "visible");
+                document.getElementById(this.id + "Text").textContent = this.value;
+            }
+            async drop() {
+                let i = this.value/10;
+                if (i < 1) return 0;
+                this.value = this.value-10;
+                let boxes = document.getElementById(this.id + "Svg")
+                i = 1;
+                while (boxes.lastChild && i <= 10) {
+                    i++;
+                    boxes.removeChild(boxes.lastChild);
+                }
+                return 1;
             }
         }
 
@@ -147,12 +188,22 @@
         let carryBox = new Box("carryBox", [-55, -60, -65], [80, 92, 105])
         carryBox.color = "blue";
 
-        firstBox.fillBox(9).then(()=>{
+        firstBox.showNumber();
+        firstBox.fillBox(9).then(() => {
+            secondBox.showNumber();
             return secondBox.fillBox(4);
-        }).then(()=>{
+        }).then(() => {
             return totalBox.fillBox(13);
-        }).then(()=>{
+        }).then(() => {
+            totalBox.drop();
             return carryBox.fillBox(1);
+        }).then(()=>{
+            totalBox.showNumber()
+            return carryBox.showNumber()
+        }).then(()=>{
+            document.getElementById("finalText").setAttribute("visibility", "visible");
+            document.getElementById("finalText").textContent = carryBox.value*10+totalBox.value;
+
         })
     </script>
 
