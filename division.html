@@ -126,10 +126,6 @@
                         </g>
                     </g>
                     <script type="text/javascript">
-                        // TODO class carrier 
-
-                        // TODO path for animation (pipe)
-
                         class Container {
                             constructor(module) {
                                 this.id = module + "_case";
@@ -285,7 +281,8 @@
                                             translateX,
                                             translateAngle).createSVG();
                                         setTimeout(function timer() {
-                                            svg.appendChild(circle);
+                                            document.getElementById("dividend_box").appendChild(
+                                                circle);
                                             dividentContainer.circles.push(circle);
                                             if ((row - 1) * 10 + (11 - col) >= count) resolve();
                                         }, ((row - 1) * 10 + 10 - col) * 100);
@@ -295,6 +292,32 @@
                             });
 
                         }
+                        async function fillBucket(count, base) {
+                            var cx = 190;
+                            let rowCount = count / base;
+                            await new Promise((resolve, reject) => {
+                                for (let row = 1; row <= rowCount + 1; row++) {
+                                    for (let col = base; col >= 1; col--) {
+                                        if (row > rowCount && (base - col) >= count % base) break;
+                                        const cy = 420 - 18 * row;
+                                        const translateX = 18 * ((col - 1) % base);
+                                        const translateAngle = 0.12 * (base - col) + 0.12;
+                                        const circle = new Circle("circle_" + row * 10 + col, 8, cy, cx,
+                                            translateX,
+                                            translateAngle).createSVG();
+                                        setTimeout(function timer() {
+                                            svg.appendChild(circle);
+                                            dividentContainer.circles.push(circle);
+                                            if ((row - 1) * base + (base - col) >= count) resolve();
+                                        }, ((row - 1) * 10 + 10 - col) * 100);
+                                    }
+
+                                }
+                            });
+
+                        }
+                        async function dropBalls() {}
+
                         async function moveBall() {
 
                             await new Promise((resolve, reject) => {
@@ -302,20 +325,19 @@
                                 for (let i = 1; i <= count; i++) {
                                     for (let j = 1; j <= 100; j++) {
                                         setTimeout(function timer() {
-                                            let topCircles = dividentContainer.circles.slice(-1*(dividentContainer.circles.length%10));
+                                            let topCircles = dividentContainer.circles.slice(-1 * (
+                                                dividentContainer.circles.length % 10));
 
                                             for (moving of topCircles) {
-                                                moving.setAttribute("cx", parseFloat(moving
-                                                        .getAttribute("cx")) + j *
-                                                    0.2);
-                                                if (j > 20) {
-                                                    moving.setAttribute("cy", parseFloat(moving
-                                                            .getAttribute("cy")) +
-                                                        j * 0.2);
-                                                }
-                                                
-                                            }
+                                                let xPos = moving.getAttribute("cx");
+                                                ley y2 = moving.getAttribute("cy");
 
+                                                if (xPos > 300) {
+                                                    moving.setAttribute("cy", y2 + j * 0.25);
+                                                }
+                                                moving.setAttribute("cx", xPos + j *0.2);
+
+                                            }
 
                                             if (j >= 100 && i >= count) resolve()
                                         }, j * 30)

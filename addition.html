@@ -101,10 +101,10 @@
                 </g>
             </g>
             <text id="firstBoxText" visibility="hidden" x="200" y="75" class="heavy">0</text>
-            <text id="secondBoxText" visibility="hidden"   x="180" y="125" class="heavy">0</text>
-            <text id="totalBoxText" visibility="hidden"   x="115" y="205" class="heavy">0</text>
-            <text id="carryBoxText"  visibility="hidden"  x="65" y="205" class="heavy">0</text>
-            <text id="finalText"  visibility="hidden"  x="150" y="205" class="heavy">0</text>
+            <text id="secondBoxText" visibility="hidden" x="180" y="125" class="heavy">0</text>
+            <text id="totalBoxText" visibility="hidden" x="115" y="205" class="heavy">0</text>
+            <text id="carryBoxText" visibility="hidden" x="65" y="205" class="heavy">0</text>
+            <text id="finalText" visibility="hidden" x="150" y="205" class="heavy">0</text>
 
             <g id="firstBoxSvg">
 
@@ -149,13 +149,61 @@
                                 floor) + ")");
                             clone.setAttribute("visibility", "visible");
                             document.getElementById(copy.id + "Svg").appendChild(clone);
-                            document.getElementById(copy.id + "Text").textContent = i+1;
+                            document.getElementById(copy.id + "Text").textContent = i + 1;
 
                             if (i === count - 1) resolve();
                         }, i * 300);
                     }
                 })
             }
+
+            async move(otherBox) {
+                let boxes = document.getElementById(this.id + "Svg");
+                let copy = this;
+                await new Promise((resolve, reject) => {
+                    let total = this.value;
+                    let copy = this;
+                    for (let i = 1; i <= total; i++) {
+                        if (!boxes.lastChild.className === "SVGAnimatedString") {
+                            i--;
+                            boxes.removeChild(boxes.lastChild)
+                            continue;
+                        }
+                        setTimeout(function timer() {
+                            boxes.removeChild(boxes.lastChild);
+                            copy.value = copy.value - 1;
+                            otherBox.addOne();
+                            if(otherBox.id !== "totalBox"){
+                                otherBox.showNumber();
+                            }
+                            copy.showNumber();
+                            if (i >= total) resolve()
+
+                        }, i * 300);
+
+                    }
+                });
+
+            }
+
+            async addOne() {
+                var clone = originalBar.cloneNode(true); // "deep" clone
+                clone.id = this.id + "_bar_" + this.value;
+                let floor = Math.floor(this.value / 9);
+                let line = Math.floor(this.value / 3) % 3;
+                if (this.color !== "ff0026") this.setColor(clone);
+
+                clone.setAttribute("transform", "translate(" + (this.value % 3 * 14 +
+                this
+                    .xPositions[line]) + "," + (this.yPositions[line] -
+                    12 *
+                    floor) + ")");
+                clone.setAttribute("visibility", "visible");
+                document.getElementById(this.id + "Svg").appendChild(clone);
+                document.getElementById(this.id + "Text").textContent = this.value + 1;
+                this.value = this.value + 1;
+            }
+
             async setColor(clone) {
                 let paths = clone.querySelectorAll("path");
                 clone.querySelectorAll("rect")[0].setAttribute("fill", this.color);
@@ -164,14 +212,15 @@
                 }
             }
 
-            async showNumber(){
+            async showNumber() {
                 document.getElementById(this.id + "Text").setAttribute("visibility", "visible");
                 document.getElementById(this.id + "Text").textContent = this.value;
             }
+
             async drop() {
-                let i = this.value/10;
+                let i = this.value / 10;
                 if (i < 1) return 0;
-                this.value = this.value-10;
+                this.value = this.value - 10;
                 let boxes = document.getElementById(this.id + "Svg")
                 i = 1;
                 while (boxes.lastChild && i <= 10) {
@@ -188,22 +237,30 @@
         let carryBox = new Box("carryBox", [-55, -60, -65], [80, 92, 105])
         carryBox.color = "blue";
 
+
         firstBox.showNumber();
-        firstBox.fillBox(9).then(() => {
+        let first = 5;
+        let second = 5;
+        firstBox.fillBox(first).then(() => {
             secondBox.showNumber();
-            return secondBox.fillBox(4);
+            return secondBox.fillBox(second);
         }).then(() => {
-            return totalBox.fillBox(13);
+            return secondBox.move(totalBox);
         }).then(() => {
-            totalBox.drop();
-            return carryBox.fillBox(1);
-        }).then(()=>{
+            return firstBox.move(secondBox);
+        }).then(() => {
+            return secondBox.move(totalBox);
+        }).then(() => {
+             if(first+second> 9){
+                totalBox.drop();
+                return carryBox.fillBox((first+second)/10);
+             }
+        }).then(() => {
             totalBox.showNumber()
             return carryBox.showNumber()
-        }).then(()=>{
+        }).then(() => {
             document.getElementById("finalText").setAttribute("visibility", "visible");
-            document.getElementById("finalText").textContent = carryBox.value*10+totalBox.value;
-
+            document.getElementById("finalText").textContent = carryBox.value * 10 + totalBox.value;
         })
     </script>
 
