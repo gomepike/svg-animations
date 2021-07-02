@@ -8,6 +8,34 @@
     <title>Scales</title>
 
     <style>
+        /* Add a black background color to the top navigation */
+        .topnav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        /* Style the links inside the navigation bar */
+        .topnav a {
+            float: left;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        /* Change the color of links on hover */
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Add a color to the active/current link */
+        .topnav a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
         #left_hand {
             transform-origin: 50% 10%;
         }
@@ -15,25 +43,24 @@
         #right_hand {
             transform-origin: 50% 10%;
         }
- 
+
         svg {
-            position: relative;  
+            position: relative;
         }
     </style>
 </head>
 
 <body>
     <div id="mainDiv" style="width: 50%; height: auto;">
-        <h1>Enter a number to match</h1>
+        <div class="topnav">
+            <a class="active" href="file:///home/mstf/Downloads/svg/svg-animations/scales.html">Scale</a>
+            <a href="file:///home/mstf/Downloads/svg/svg-animations/addition.html">Addition</a>
+            <a href="file:///home/mstf/Downloads/svg/svg-animations/division.html">Division</a>
+        </div>
 
-<form action="">
-  <label for="quantity">Value:</label>
-  <input type="number" id="quantity" name="quantity" min="1" max="20">
-  <input type="submit">
-</form>
         <svg style="margin: 50px;" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1569.795 1694.367"
-            enable-background="new 0 0 1569.795 1694.367" xml:space="preserve" onload="makeDraggable(evt)" >
+            enable-background="new 0 0 1569.795 1694.367" xml:space="preserve" onload="makeDraggable(evt)">
             <style>
                 .static {
                     cursor: not-allowed;
@@ -45,8 +72,8 @@
                 }
             </style>
             <script type="text/javascript">
-                class WeightBox{
-                    constructor(xStart, xEnd, yStart, yEnd,xBase,yBase){
+                class WeightBox {
+                    constructor(xStart, xEnd, yStart, yEnd, xBase, yBase) {
                         this.elements = [];
                         this.xStart = xStart;
                         this.xEnd = xEnd;
@@ -56,49 +83,56 @@
                         this.yBase = yBase;
                         this.total = 0;
                     }
-                    isValid(selectedElement){
-                        return selectedElement !== undefined && 
-                        selectedElement.getAttribute && 
-                        selectedElement.getAttribute("initialX") !== undefined
+                    isValid(selectedElement) {
+                        return selectedElement !== undefined &&
+                            selectedElement.getAttribute &&
+                            selectedElement.getAttribute("initialX") !== undefined
                     }
 
-                    isIn(xPos, yPos){
+                    isIn(xPos, yPos) {
                         return xPos > this.xStart && xPos < this.xEnd && yPos > this.yStart && yPos < this.yEnd;
                     }
 
-                    getIndex(selectedElement){
-                        let index =  this.elements.findIndex(e=>e.id === selectedElement.id);
-                        if(index >= 0){
+                    getIndex(selectedElement) {
+                        let index = this.elements.findIndex(e => e.id === selectedElement.id);
+                        if (index >= 0) {
                             return index;
                         }
                         return this.elements.length;
                     }
-                    removeElement(selectedElement){
-                        let index =  this.elements.findIndex(e=>e.id === selectedElement.id);
-                        if(index >= 0){
-                            this.elements.splice( this.elements.findIndex(e=>e.id === selectedElement.id), 1);
+                    removeElement(selectedElement) {
+                        let index = this.elements.findIndex(e => e.id === selectedElement.id);
+                        if (index >= 0) {
+                            this.elements.splice(this.elements.findIndex(e => e.id === selectedElement.id), 1);
                         }
                     }
-                    translate(selectedElement){
-                        console.log("translate index:"+this.getIndex(selectedElement));
-                        console.log("translate value:"+ (this.xBase + this.getIndex(selectedElement)*50) +" y:" +this.yBase);
-                        transform.setTranslate(this.xBase + this.getIndex(selectedElement)*50, this.yBase );
-                        let index = this.elements.findIndex(e=>e.id === selectedElement.id);
-                        if (index === -1){
-                            this.elements.push({id: selectedElement.id, value: parseInt(selectedElement.getAttribute("value"))});                            
+                    translate(selectedElement) {
+                        console.log("translate index:" + this.getIndex(selectedElement));
+                        console.log("translate value:" + (this.xBase + this.getIndex(selectedElement) * 50) +
+                            " y:" + this.yBase);
+                        transform.setTranslate(this.xBase + this.getIndex(selectedElement) * 50, this.yBase);
+                        let index = this.elements.findIndex(e => e.id === selectedElement.id);
+                        if (index === -1) {
+                            this.elements.push({
+                                id: selectedElement.id,
+                                value: parseInt(selectedElement.getAttribute("value"))
+                            });
                         }
                     }
-                    calculateTotal(){
-                        this.total = this.elements.reduce((n, {value}) => n + value, 0);
+                    calculateTotal() {
+                        this.total = this.elements.reduce((n, {
+                            value
+                        }) => n + value, 0);
                     }
 
                 }
-                let leftWeightBox = new WeightBox(80,550,445,765, 125, 660);
-                let rightWeightBox = new WeightBox(1020,1500,475,765, 1075, 660);
+                let leftWeightBox = new WeightBox(80, 550, 445, 765, 125, 660);
+                let rightWeightBox = new WeightBox(1020, 1500, 475, 765, 1075, 660);
                 let currentStatus = 0;
 
                 let transform;
-                 function makeDraggable(evt) {
+
+                function makeDraggable(evt) {
                     let svg = evt.target;
 
                     svg.addEventListener('mousedown', startDrag);
@@ -163,42 +197,46 @@
                         }
                     }
 
-                    function moveBoxes(){
+                    function moveBoxes() {
                         leftWeightBox.calculateTotal();
                         rightWeightBox.calculateTotal();
 
-                        if(leftWeightBox.total > rightWeightBox.total){
+                        if (leftWeightBox.total > rightWeightBox.total) {
                             setUpper(currentStatus);
                             currentStatus = 1;
-                        }else if (rightWeightBox.total > leftWeightBox.total){
+                        } else if (rightWeightBox.total > leftWeightBox.total) {
                             setLower(currentStatus);
                             currentStatus = 2;
-                        }else{
+                        } else {
                             balance(currentStatus);
                             currentStatus = 0;
                         }
                     }
-                    
+
                     function endDrag(evt) {
                         var coord = getMousePosition(evt);
-                        if(!leftWeightBox.isValid(selectedElement) && !rightWeightBox.isValid(selectedElement)){
+                        if (!leftWeightBox.isValid(selectedElement) && !rightWeightBox.isValid(selectedElement)) {
                             selectedElement = false;
                             return
                         }
- 
-                        if(leftWeightBox.isIn(coord.x, coord.y)){
+
+                        if (leftWeightBox.isIn(coord.x, coord.y)) {
                             leftWeightBox.translate(selectedElement);
                             rightWeightBox.removeElement(selectedElement);
-                            document.getElementById("left_box_group").appendChild(document.getElementById(selectedElement.id));
-                        }else if(rightWeightBox.isIn(coord.x, coord.y)){
+                            document.getElementById("left_box_group").appendChild(document.getElementById(
+                                selectedElement.id));
+                        } else if (rightWeightBox.isIn(coord.x, coord.y)) {
                             rightWeightBox.translate(selectedElement);
                             leftWeightBox.removeElement(selectedElement);
-                            document.getElementById("right_box_group").appendChild(document.getElementById(selectedElement.id));
-                        }else{
-                            transform.setTranslate(selectedElement.getAttribute("initialx"),selectedElement.getAttribute("initialy"));
+                            document.getElementById("right_box_group").appendChild(document.getElementById(
+                                selectedElement.id));
+                        } else {
+                            transform.setTranslate(selectedElement.getAttribute("initialx"), selectedElement
+                                .getAttribute("initialy"));
                             leftWeightBox.removeElement(selectedElement);
                             rightWeightBox.removeElement(selectedElement);
-                            document.getElementById("weight_group").appendChild(document.getElementById(selectedElement.id));
+                            document.getElementById("weight_group").appendChild(document.getElementById(selectedElement
+                                .id));
                         }
                         selectedElement = false;
                         moveBoxes();
@@ -270,7 +308,8 @@
             </g>
 
             <g id="weight_group">
-                <path id="three_one" value="3" initialX="1200" initialY="1200" class="draggable" transform="translate(1200,1200) scale(0.2)" d="M188.617,112.135V85.216c25.673-3.653,43.213-9.586,45.168-16.372c0,0,0-47.308,0-47.386
+                <path id="three_one" value="3" initialX="1200" initialY="1200" class="draggable"
+                    transform="translate(1200,1200) scale(0.2)" d="M188.617,112.135V85.216c25.673-3.653,43.213-9.586,45.168-16.372c0,0,0-47.308,0-47.386
 		C233.785,9.608,186.898,0,129.057,0C71.217,0,24.344,9.608,24.344,21.459c0,0.078,0,47.386,0,47.386
 		c1.953,6.786,19.482,12.719,45.151,16.364v26.927C28.407,116.843,0.333,126.242,0.333,137.1v0.008v311.869
 		c0,15.566,57.64,28.183,128.724,28.183c71.104,0,128.741-12.617,128.741-28.183V137.108V137.1
@@ -283,7 +322,8 @@
 		c22.055,0,34.277,11.587,34.277,25.717c0,10.951-6.189,19.529-18.894,23.972v0.318c12.395,2.218,22.384,11.586,22.384,25.081
 		C165.585,348.102,149.565,361.434,123.364,361.434z" />
 
-                <path id="three_two" value="3" initialX="1250" initialY="1200"  class="draggable" transform="translate(1250,1200) scale(0.2)" d="M188.617,112.135V85.216c25.673-3.653,43.213-9.586,45.168-16.372c0,0,0-47.308,0-47.386
+                <path id="three_two" value="3" initialX="1250" initialY="1200" class="draggable"
+                    transform="translate(1250,1200) scale(0.2)" d="M188.617,112.135V85.216c25.673-3.653,43.213-9.586,45.168-16.372c0,0,0-47.308,0-47.386
 		C233.785,9.608,186.898,0,129.057,0C71.217,0,24.344,9.608,24.344,21.459c0,0.078,0,47.386,0,47.386
 		c1.953,6.786,19.482,12.719,45.151,16.364v26.927C28.407,116.843,0.333,126.242,0.333,137.1v0.008v311.869
 		c0,15.566,57.64,28.183,128.724,28.183c71.104,0,128.741-12.617,128.741-28.183V137.108V137.1
@@ -296,7 +336,8 @@
 		c22.055,0,34.277,11.587,34.277,25.717c0,10.951-6.189,19.529-18.894,23.972v0.318c12.395,2.218,22.384,11.586,22.384,25.081
 		C165.585,348.102,149.565,361.434,123.364,361.434z" />
 
-                <path id="one_one" value="1"  initialX="1260" initialY="1200"  class="draggable" transform="translate(1260,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
+                <path id="one_one" value="1" initialX="1260" initialY="1200" class="draggable"
+                    transform="translate(1260,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
 		c0-8.399-33.225-15.208-74.204-15.208c-40.996,0-74.221,6.809-74.221,15.208c0,0.054,0,33.581,0,33.581
 		c1.381,4.816,13.807,9.019,32.001,11.601v19.08c-29.115,3.334-49.031,10.004-49.031,17.698v221.037
 		c0,11.036,40.857,19.978,91.251,19.978c50.38,0,91.234-8.942,91.234-19.978V236.145
@@ -305,7 +346,8 @@
 		c-1.969-0.97-3.396-2.777-3.86-4.925c-0.728-3.288,0.93-6.639,3.986-8.066l14.734-6.855c1.241-0.574,2.574-0.869,3.939-0.869h4.608
 		c5.148,0,9.336,4.18,9.336,9.337V374.176z" />
 
-                <path id="one_two" value="1"  initialX="1285" initialY="1200"  class="draggable" transform="translate(1285,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
+                <path id="one_two" value="1" initialX="1285" initialY="1200" class="draggable"
+                    transform="translate(1285,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
 		c0-8.399-33.225-15.208-74.204-15.208c-40.996,0-74.221,6.809-74.221,15.208c0,0.054,0,33.581,0,33.581
 		c1.381,4.816,13.807,9.019,32.001,11.601v19.08c-29.115,3.334-49.031,10.004-49.031,17.698v221.037
 		c0,11.036,40.857,19.978,91.251,19.978c50.38,0,91.234-8.942,91.234-19.978V236.145
@@ -314,7 +356,8 @@
 		c-1.969-0.97-3.396-2.777-3.86-4.925c-0.728-3.288,0.93-6.639,3.986-8.066l14.734-6.855c1.241-0.574,2.574-0.869,3.939-0.869h4.608
 		c5.148,0,9.336,4.18,9.336,9.337V374.176z" />
 
-                <path id="one_three" value="1"  initialX="1310" initialY="1200"  class="draggable" transform="translate(1310,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
+                <path id="one_three" value="1" initialX="1310" initialY="1200" class="draggable"
+                    transform="translate(1310,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
 		c0-8.399-33.225-15.208-74.204-15.208c-40.996,0-74.221,6.809-74.221,15.208c0,0.054,0,33.581,0,33.581
 		c1.381,4.816,13.807,9.019,32.001,11.601v19.08c-29.115,3.334-49.031,10.004-49.031,17.698v221.037
 		c0,11.036,40.857,19.978,91.251,19.978c50.38,0,91.234-8.942,91.234-19.978V236.145
@@ -323,7 +366,8 @@
 		c-1.969-0.97-3.396-2.777-3.86-4.925c-0.728-3.288,0.93-6.639,3.986-8.066l14.734-6.855c1.241-0.574,2.574-0.869,3.939-0.869h4.608
 		c5.148,0,9.336,4.18,9.336,9.337V374.176z" />
 
-                <path id="one_four" value="1"  initialX="1335" initialY="1200"  class="draggable" transform="translate(1335,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
+                <path id="one_four" value="1" initialX="1335" initialY="1200" class="draggable"
+                    transform="translate(1335,1200) scale(0.2)" d="M427.812,218.447v-19.071c18.18-2.591,30.604-6.794,31.984-11.61c0,0,0-33.527,0-33.581
 		c0-8.399-33.225-15.208-74.204-15.208c-40.996,0-74.221,6.809-74.221,15.208c0,0.054,0,33.581,0,33.581
 		c1.381,4.816,13.807,9.019,32.001,11.601v19.08c-29.115,3.334-49.031,10.004-49.031,17.698v221.037
 		c0,11.036,40.857,19.978,91.251,19.978c50.38,0,91.234-8.942,91.234-19.978V236.145
@@ -345,9 +389,9 @@
     </div>
 
     <script>
-            window.addEventListener('load', function() {
-                var svg = document.getElementsByTagName("svg")[0];
-            svg.setAttribute("transform", "scale(0.70)") 
+        window.addEventListener('load', function () {
+            var svg = document.getElementsByTagName("svg")[0];
+            svg.setAttribute("transform", "scale(0.70)")
         })
 
         const leftBox = document.getElementById("left_box_group");
@@ -362,7 +406,7 @@
         setPositions(leftYCoord, rightYCoord, degree);
 
         function setUpper(current) {
-            if(current === 1) return;
+            if (current === 1) return;
             setTimeout(function () {
                 leftYCoord += 4;
                 rightYCoord = -1 * leftYCoord;
@@ -370,27 +414,28 @@
                 setPositions(leftYCoord, rightYCoord, degree)
                 if (leftYCoord < 80) {
                     setUpper();
-                } 
+                }
             }, 16);
 
         };
+
         function balance(current) {
-            if(current === 0) return;
+            if (current === 0) return;
             setTimeout(function () {
                 let mult = current === 1 ? -1 : 1;
-                leftYCoord += 4*mult;
+                leftYCoord += 4 * mult;
                 rightYCoord = -1 * leftYCoord;
-                degree -= 0.5*mult;
+                degree -= 0.5 * mult;
                 setPositions(leftYCoord, rightYCoord, degree)
                 if (leftYCoord !== 0) {
                     balance(current);
-                } 
+                }
             }, 16);
 
         };
 
         function setLower(current) {
-            if(current === 2) return;
+            if (current === 2) return;
             setTimeout(function () {
                 leftYCoord -= 4;
                 rightYCoord = -1 * leftYCoord;
@@ -398,7 +443,7 @@
                 setPositions(leftYCoord, rightYCoord, degree)
                 if (leftYCoord > -80) {
                     setLower();
-                } 
+                }
             }, 16);
 
         };

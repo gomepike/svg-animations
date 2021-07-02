@@ -8,6 +8,34 @@
     <title>Divisor Machine</title>
 
     <style>
+        /* Add a black background color to the top navigation */
+        .topnav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        /* Style the links inside the navigation bar */
+        .topnav a {
+            float: left;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        /* Change the color of links on hover */
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Add a color to the active/current link */
+        .topnav a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
         #left_hand {
             transform-origin: 50% 10%;
         }
@@ -61,6 +89,11 @@
 </head>
 
 <body>
+    <div class="topnav">
+        <a href="file:///home/mstf/Downloads/svg/svg-animations/scales.html">Scale</a>
+        <a href="file:///home/mstf/Downloads/svg/svg-animations/addition.html">Addition</a>
+        <a class="active" href="file:///home/mstf/Downloads/svg/svg-animations/division.html">Division</a>
+    </div>
     <div class="container">
         <div class="Main">
             <div class="L1">
@@ -103,7 +136,7 @@
                             <rect stroke-width="0" transform="translate(2,200) scale(1,0.5)" id="svg_1" height="289"
                                 width="26" y="139" x="155" stroke="#000" fill="#8CD79F" />
                         </g>
-                        <g id="quotient_bar" transform="translate(0, 30)">
+                        <g id="quotient_bar" transform="translate(0, -30)">
                             <rect transform="rotate(1.84501 369.026 334.389)" stroke="#000" stroke-width="0" id="svg_4"
                                 height="7.65829" width="24.4422" y="330.5598" x="356.80492" fill="#FABA6F" />
                             <rect stroke-width="0" stroke="#000" id="svg_3" height="161" width="20" y="330" x="349"
@@ -125,6 +158,11 @@
                                 fill="#FABA6F"></rect>
                         </g>
                     </g>
+                    <text id="dividendText" visibility="hidden" x="275" y="300" class="heavy">0</text>
+                    <text id="dividerText" visibility="hidden" x="550" y="125" class="heavy">0</text>
+                    <text id="quotientText" visibility="hidden" x="550" y="500" class="heavy">0</text>
+                    <text id="finalText" visibility="hidden" x="550" y="750" class="heavy">0</text>
+
                     <script type="text/javascript">
                         class Container {
                             constructor(module) {
@@ -292,6 +330,29 @@
                             });
 
                         }
+
+                        async function addToQuotient(dividentValue) {
+                            var cx = 185;
+
+                            await new Promise((resolve, reject) => {
+                                const row = Math.floor(quotientContainer.circles.length /
+                                    dividentValue);
+                                const col = quotientContainer.circles.length % dividentValue;
+                                console.log("quotient:" + row + " col:" + col);
+                                const cy = 398 - 18 * row;
+                                const translateX = 18 * (col - 1) + 18;
+                                const translateAngle = -0.25 * (dividentValue - col) - 0.25;
+                                const circle = new Circle("circle_" + row * dividentValue + col,
+                                    8, cy, cx,
+                                    translateX,
+                                    translateAngle).createSVG();
+                                document.getElementById("quotient_box").appendChild(
+                                    circle);
+                                quotientContainer.circles.push(circle);
+                                resolve()
+                            });
+
+                        }
                         async function fillBucket(count, base) {
                             var cx = 190;
                             let rowCount = count / base;
@@ -302,13 +363,15 @@
                                         const cy = 420 - 18 * row;
                                         const translateX = 18 * ((col - 1) % base);
                                         const translateAngle = 0.12 * (base - col) + 0.12;
-                                        const circle = new Circle("circle_" + row * 10 + col, 8, cy, cx,
+                                        const circle = new Circle("circle_" + row * 10 + col, 8, cy,
+                                            cx,
                                             translateX,
                                             translateAngle).createSVG();
                                         setTimeout(function timer() {
                                             svg.appendChild(circle);
                                             dividentContainer.circles.push(circle);
-                                            if ((row - 1) * base + (base - col) >= count) resolve();
+                                            if ((row - 1) * base + (base - col) >= count)
+                                                resolve();
                                         }, ((row - 1) * 10 + 10 - col) * 100);
                                     }
 
@@ -316,35 +379,138 @@
                             });
 
                         }
-                        async function dropBalls() {}
+                        const dropBalls = async (current, topCircles) => {
+                            return new Promise((resolve, reject) => {
+                                const promises = []
+
+                                for (moving of topCircles) {
+                                    const animPromises = []
+
+                                    for (let j = 1; j <= 10; j++) {
+                                        setTimeout(function timer() {
+                                            let xPos = moving.getAttribute("cx");
+                                            let yPos = moving.getAttribute("cy");
+                                            if (xPos > 240) {
+                                                moving.setAttribute("cy", (parseFloat(
+                                                        yPos) +
+                                                    j * 0.20));
+                                            }
+
+                                            if (xPos < 350) {
+                                                moving.setAttribute("cx", (parseFloat(
+                                                        xPos) +
+                                                    j * 0.25));
+                                            }
+                                            animPromises.push(new Promise((resolve,
+                                                    reject) =>
+                                                resolve()));
+                                            console.log("anim:" + animPromises.length)
+                                        }, j * 50)
+                                    }
+                                    Promise.all(animPromises);
+
+                                    promises.push(new Promise((resolve, reject) => resolve()));
+
+                                }
+                                return Promise.all(promises);
+                            });
+                        }
+
+                        async function dropBall(current) {
+                            const promises = []
+                            const targetX = 290;
+                            const matrix = current.transform.baseVal.consolidate().matrix;
+                            let xRatio = (targetX - matrix['e']) / 25;
+                            let xDiv = (220 - matrix['e']) / xRatio;
+                            let yRatio = (40 - matrix['f']) / xDiv;
+                            console.log("x:" + matrix['e']);
+                            console.log("y:" + matrix['f']);
+                            console.log("xratio:" + xRatio + " yratio:" + yRatio);
+                            let pushed = false;
+                            for (let j = 1; j <= 25; j++) {
+                                setTimeout(function timer() {
+                                    let xPos = current.transform.baseVal.consolidate().matrix['e'];
+                                    let yPos = current.transform.baseVal.consolidate().matrix['f'];
+
+                                    if (xPos > 220 && yPos < 80 && xPos < 290) {
+                                        yPos = parseFloat(yPos) + yRatio;
+                                    }
+
+
+
+                                    if (xPos >= 290) {
+                                        xRatio = 0;
+                                        yPos = yPos + yRatio;
+                                        // console.log("finished at:" + j + " xPos:" + xPos + " yPos:" +   yPos)
+                                    }
+                                    current.setAttribute("transform", "translate(" + (
+                                        parseFloat(xPos) + xRatio) + "," + yPos + ")");
+
+                                    if (j >= 25 && !pushed) {
+                                        current.setAttribute("visibility", "hidden");
+                                        promises.push(addToQuotient(4));
+                                        pushed = true;
+                                    }
+                                    promises.push(Promise.resolve(j));
+
+                                }, j * 50)
+                            }
+                            return Promise.all(promises)
+
+                        }
+
+                        async function dropRemainder(dividerValue) {
+
+                            await new Promise((resolve, reject) => {
+
+                                setTimeout(function timer() {
+
+                                    const lastRowCount = quotientContainer.circles.length %
+                                        dividerValue;
+                                    let topCircles = quotientContainer.circles.slice(-1 *
+                                        lastRowCount);
+                                    const promises = []
+                                    console.log("running in remainder:" + topCircles.length);
+                                    for (let i = 0; i < topCircles.length; i++) {
+
+                                        for (let j = 1; j <= 26; j++) {
+                                            setTimeout(function timer() {
+                                                topCircles[i].transform.baseVal
+                                                    .consolidate().matrix['f'] += 10.5;
+
+                                                if (i >= topCircles.length - 1 && j >= 26)
+                                                    resolve();
+                                            }, 1500 + j * 30);
+
+                                        }
+                                    }
+                                }, 1500)
+
+                            })
+
+                        }
 
                         async function moveBall() {
 
-                            await new Promise((resolve, reject) => {
-                                let count = Math.ceil(dividentContainer.circles.length / 10);
-                                for (let i = 1; i <= count; i++) {
-                                    for (let j = 1; j <= 100; j++) {
-                                        setTimeout(function timer() {
-                                            let topCircles = dividentContainer.circles.slice(-1 * (
-                                                dividentContainer.circles.length % 10));
+                            let count = Math.ceil(dividentContainer.circles.length / 10);
+                            let current = dividentContainer.circles.length;
+                            console.log("total:" + current + "  count:" + count);
+                            const promises = []
 
-                                            for (moving of topCircles) {
-                                                let xPos = moving.getAttribute("cx");
-                                                ley y2 = moving.getAttribute("cy");
+                            for (let i = 1; i <= count; i++) {
+                                console.log("moving:" + i)
+                                let topCircles = dividentContainer.circles.splice(-1 * (current % 10));
+                                console.log("top slice count:" + topCircles.length);
+                                current = current - topCircles.length;
 
-                                                if (xPos > 300) {
-                                                    moving.setAttribute("cy", y2 + j * 0.25);
-                                                }
-                                                moving.setAttribute("cx", xPos + j *0.2);
-
-                                            }
-
-                                            if (j >= 100 && i >= count) resolve()
-                                        }, j * 30)
-                                    }
-                                    dividentContainer.lowerBarByOne()
+                                console.log("currentCount:" + current)
+                                dividentContainer.lowerBarByOne();
+                                for (let j = 0; j < topCircles.length; j++) {
+                                    console.log("dropping:" + JSON.stringify(topCircles[j]))
+                                    promises.push(dropBall(topCircles[j]));
                                 }
-                            });
+                            }
+                            return Promise.all(promises);
                         }
 
 
@@ -361,7 +527,8 @@
                                     const cy = 394 - 18 * (Math.floor((i - 1) / 10));
                                     const translateX = 18 * ((i - 1) % 10);
                                     const translateAngle = 0.12 * ((i - 1) % 10) + 0.12;
-                                    const circle = new Circle("circle_" + i, 8, cy, cx, translateX,
+                                    const circle = new Circle("circle_" + i, 8, cy, cx,
+                                            translateX,
                                             translateAngle)
                                         .createSVG();
                                     setTimeout(function timer() {
@@ -380,12 +547,17 @@
                             dividentContainer.lowerBar();
                         }
 
-                        fillCircles(12).then((success) => {
+                        fillCircles(14).then((success) => {
                             dividentContainer.lowerBar();
+                            document.getElementById("dividendText").setAttribute("visibility", "visible");
+                            document.getElementById("dividendText").textContent = 14;
+
                         });
 
                         fillDivisor(4).then((success) => {
                             console.log("running squeezeBar");
+                            document.getElementById("dividerText").setAttribute("visibility", "visible");
+                            document.getElementById("dividerText").textContent = 4;
                             return divisorContainer.squeezeBar(divisorContainer.circles.length);
                         }).then(() => {
                             return quotientContainer.squeezeBar(divisorContainer.circles.length);
@@ -396,10 +568,41 @@
                         }).then(() => {
                             return dividentContainer.lowerBarByOne()
                         }).then(() => {
-                            moveBall()
+                            console.log("moving ball")
+                            return moveBall();
+                        }).then(() => {
+                            console.log("drop remainder")
+                            return dropRemainder(4);
+                        }).then(() => {
+                            quotientContainer.squeezeBar(1);
+                            remainderContainer.squeezeBar(2);
+                            console.log("squese alls");
+
+                            for (let i = 1; i <= 3; i++) {
+                                setTimeout(function timer() {
+                                    quotientContainer.circles[(4 - i)].setAttribute("visibility",
+                                        "hidden");
+                                    quotientContainer.circles[(8 - i)].setAttribute("visibility",
+                                        "hidden");
+                                    quotientContainer.circles[(12 - i)].setAttribute("visibility",
+                                        "hidden");
+                                    if (i === 3) {
+                                        document.getElementById("quotientText").setAttribute(
+                                            "visibility", "visible");
+                                        document.getElementById("quotientText").textContent =
+                                            "Quotient:3";
+                                        document.getElementById("finalText").setAttribute("visibility",
+                                            "visible");
+                                        document.getElementById("finalText").textContent =
+                                        "Remainder:2";
+
+                                    }
+                                }, i * 50);
+
+                            }
+
                         });
                     </script>
-
 
                     <script type="text/javascript">
 
