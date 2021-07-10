@@ -1,0 +1,364 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Divisor Machine 2</title>
+
+    <style>
+        /* Add a black background color to the top navigation */
+        .topnav {
+            background-color: #333;
+            overflow: hidden;
+        }
+
+        /* Style the links inside the navigation bar */
+        .topnav a {
+            float: left;
+            color: #f2f2f2;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        /* Change the color of links on hover */
+        .topnav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Add a color to the active/current link */
+        .topnav a.active {
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        #left_hand {
+            transform-origin: 50% 10%;
+        }
+
+        #right_hand {
+            transform-origin: 50% 10%;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 0px 0px;
+            grid-auto-flow: row;
+            grid-template-areas:
+                "Main . ."
+                "Main . ."
+                "Main . .";
+        }
+
+        .Main {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 0.2fr 1fr 1.8fr 1fr;
+            gap: 0px 0px;
+            grid-auto-flow: row;
+            grid-template-areas:
+                ". . ."
+                "L1 L2 ."
+                "L1 L3 ."
+                ". L4 .";
+            grid-area: Main;
+        }
+
+        .L1 {
+            grid-area: L1;
+        }
+
+        .L2 {
+            grid-area: L2;
+        }
+
+        .L3 {
+            grid-area: L3;
+        }
+
+        .L4 {
+            grid-area: L4;
+        }
+
+        /* Style the form - display items horizontally */
+        .form-inline {
+            display: flex;
+            flex-flow: row wrap;
+            align-items: center;
+        }
+
+        /* Add some margins for each label */
+        .form-inline label {
+            margin: 5px 10px 5px 0;
+        }
+
+        /* Style the input fields */
+        .form-inline input {
+            vertical-align: middle;
+            margin: 5px 10px 5px 0;
+            padding: 10px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+        }
+
+        /* Style the submit button */
+        .form-inline button {
+            padding: 10px 20px;
+            background-color: dodgerblue;
+            border: 1px solid #ddd;
+            color: white;
+        }
+
+        .form-inline button:hover {
+            background-color: royalblue;
+        }
+
+        /* Add responsiveness - display the form controls vertically instead of horizontally on screens that are less than 800px wide */
+        @media (max-width: 800px) {
+            .form-inline input {
+                margin: 10px 0;
+            }
+
+            .form-inline {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/3.1.1/svg.min.js"></script>
+</head>
+
+<body>
+    <div class="topnav">
+        <a href="file:///home/mstf/Downloads/svg/svg-animations/scales.html">Scale</a>
+        <a href="file:///home/mstf/Downloads/svg/svg-animations/addition.html">Addition</a>
+        <a class="" href="file:///home/mstf/Downloads/svg/svg-animations/division.html">Division</a>
+        <a class="active" href="file:///home/mstf/Downloads/svg/svg-animations/division_2.html">Division 2</a>
+
+    </div>
+    <div class="container">
+        <div class="container">
+            <form class="form-inline" action="#" onsubmit=" return start(this);">
+                <label for="dividend_val">Dividend:</label>
+                <input type="number" min="2"  id="dividend_val" name="dividend_val">
+                <label for="divider_val">Divider:</label>
+                <input type="number" min="2"   id="divider_val" name="divider_val">
+                <input type="submit" id="submit_val" value="Submit">
+                <input type="reset">
+            </form>
+        </div>
+        <div class="Main">
+
+            <div id="l1_base" class="L1">
+
+
+                <svg id="drawing" width="800" height="1000" transform="translate(0,-100)"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <g id="dividend_box">
+                        <title>Dividend</title>
+                        <g id="dividend_case">
+                            <rect transform="rotate(2.82952 273 420)" stroke-width="0" id="svg_2" height="26"
+                                width="232" y="407" x="157" stroke="#000" fill="#8CD79F" />
+                            <rect stroke-width="0" id="svg_1" height="289" width="26" y="139" x="155" stroke="#000"
+                                fill="#8CD79F" />
+                        </g>
+                        <g id="dividend_bar" transform="translate(0, -52)">
+                            <rect transform="rotate(1.84501 369.026 334.389)" stroke="#000" stroke-width="0" id="svg_4"
+                                height="7.65829" width="24.4422" y="330.5598" x="356.80492" fill="#FABA6F" />
+                            <rect stroke-width="0" stroke="#000" id="svg_3" height="161" width="20" y="330" x="349"
+                                fill="#FABA6F" />
+                        </g>
+                    </g>
+                    <g id="divisor_box" transform="translate(275,-200)">
+                        <title>Divisor</title>
+                        <g id="divisor_case">
+                            <rect transform="rotate(2.82952 401.491 390.741)" stroke-width="0" id="svg_7" height="26"
+                                width="232" y="415" x="156" stroke="#000" fill="#8CD79F"></rect>
+                            <rect stroke="#000" stroke-width="0" id="svg_6" height="50.37964" width="26" y="370" x="155"
+                                fill="#8CD79F"></rect>
+                        </g>
+                        <g id="divisor_bar" transform="translate(0, 20)">
+                            <rect transform="rotate(1.84501 492.689 375.82)" stroke="#000" stroke-width="0" id="svg_4"
+                                height="7.65829" width="24.4422" y="384" x="355" fill="#FABA6F"></rect>
+                            <rect stroke="#000" stroke-width="0" id="svg_3" height="48.58636" width="20" y="380" x="349"
+                                fill="#FABA6F"></rect>
+                        </g>
+                    </g>
+                    <g id="quotient_box" transform="translate(275,180)">
+                        <title>Quotient</title>
+                        <g id="quotient_case">
+                            <rect transform="rotate(2.82952 273 420)" stroke-width="0" id="svg_2" height="26"
+                                width="232" y="407" x="157" stroke="#000" fill="#8CD79F" />
+                            <rect stroke-width="0" transform="translate(2,200) scale(1,0.5)" id="svg_1" height="289"
+                                width="26" y="139" x="155" stroke="#000" fill="#8CD79F" />
+                        </g>
+                        <g id="quotient_bar" transform="translate(0, -30)">
+                            <rect transform="rotate(1.84501 369.026 334.389)" stroke="#000" stroke-width="0" id="svg_4"
+                                height="7.65829" width="24.4422" y="330.5598" x="356.80492" fill="#FABA6F" />
+                            <rect stroke-width="0" stroke="#000" id="svg_3" height="161" width="20" y="330" x="349"
+                                fill="#FABA6F" />
+                        </g>
+                    </g>
+                    <g id="remainder_box" transform="translate(275,400)">
+                        <title>Remainder</title>
+                        <g id="remainder_case">
+                            <rect transform="rotate(2.82952 401.491 390.741)" stroke-width="0" id="svg_7" height="26"
+                                width="232" y="415" x="156" stroke="#000" fill="#8CD79F"></rect>
+                            <rect stroke="#000" stroke-width="0" id="svg_6" height="50.37964" width="26" y="370" x="155"
+                                fill="#8CD79F"></rect>
+                        </g>
+                        <g id="remainder_bar" transform="translate(0, 20)">
+                            <rect transform="rotate(1.84501 492.689 375.82)" stroke="#000" stroke-width="0" id="svg_4"
+                                height="7.65829" width="24.4422" y="384" x="355" fill="#FABA6F"></rect>
+                            <rect stroke="#000" stroke-width="0" id="svg_3" height="48.58636" width="20" y="380" x="349"
+                                fill="#FABA6F"></rect>
+                        </g>
+                    </g>
+                    <text id="dividendText" visibility="hidden" x="275" y="300" class="heavy">0</text>
+                    <text id="dividerText" visibility="hidden" x="550" y="125" class="heavy">0</text>
+                    <text id="quotientText" visibility="hidden" x="550" y="500" class="heavy">0</text>
+                    <text id="finalText" visibility="hidden" x="550" y="750" class="heavy">0</text>
+
+                </svg>
+            </div>
+            <div class="L2">
+
+
+            </div>
+            <div class="L3"></div>
+            <div class="L4"></div>
+        </div>
+    </div>
+    <script>
+        let dividends = new SVG.List()
+        let divisors = new SVG.List()
+        let quotients = new SVG.List()
+        let quotientGroups = new SVG.List()
+
+        const draw = SVG().addTo('#drawing');
+        const timeline = new SVG.Timeline()
+        timeline.speed(2)
+
+        async function start(dividend, divider) {
+            let dividends = new SVG.List()
+            let divisors = new SVG.List()
+            let quotients = new SVG.List()
+            let quotientGroups = new SVG.List()
+            fillDivident(dividend).then((resolve, reject) => {
+                return fillDivider(divider);
+            }).then((resolve, reject) => {
+                return process(dividend, divider);
+            })
+        }
+
+
+
+        async function fillDivident(number) {
+            const row = Math.ceil((number+0.0001) / 10);
+            const lastCol = number % 10;
+            const promises = []
+            for (let j = 1; j <= row; j++) {
+                for (let i = 1; i <= 10 && j * 10 + i <= row * 10 + lastCol; i++) {
+                    let circle = draw.circle(15.8).fill("#f06").move(275, 250);
+                    circle.timeline(timeline);
+                    circle.animate().during(function (pos, morph, eased) {
+                        SVG.find('#dividendText').text((j - 1) * 10 + i).attr('visibility', 'visible')
+                    }).delay().move(350 - i * 16.5, 410.5 - i * 0.90 - j * 16.5);
+                    dividends.push(circle);
+                    promises.push(Promise.resolve(i));
+                }
+            }
+
+            return Promise.all(promises);
+        }
+
+        async function fillDivider(number) {
+            const promises = []
+            for (let i = 1; i <= number; i++) {
+                let circle = draw.circle(15.8).fill("#f06").move(540, 125);
+                circle.timeline(timeline);
+                circle.animate().during(function (pos, morph, eased) {
+                    SVG.find('#dividerText').text(i).attr('visibility', 'visible')
+                }).delay().move(442 + i * 16.5, 186 + i * 0.90);
+                divisors.push(circle);
+                promises.push(Promise.resolve(i));
+            }
+            return Promise.all(promises);
+        }
+
+        async function process(number, divider) {
+
+            // move the bars to the initial positions
+            SVG.find('#dividend_bar').timeline(timeline).animate().delay().move(350, 460 - 16.5 * Math.floor(
+                number / 10));
+            SVG.find('#divisor_bar').timeline(timeline).animate().delay().move(350 - (10 - divider) * 16.5, 370);
+            SVG.find('#quotient_bar').timeline(timeline).animate().delay().move(350 - (10 - divider) * 16.5, 305);
+
+
+            // move circles from dividend to quotient box
+            let current = 0;
+            for (let j = Math.floor(number / divider); j >= 0; j--) {
+                for (let i = 0; i < 10 && j * 10 + i < number; i++, current++) {
+                    quotients.push(dividends[parseInt(j * 10) + i]);
+                    dividends[parseInt(j * 10) + i].animate().delay().move(500, 400 + j * 10).animate().move(
+                        610 - (current % divider + (10 - divider)) * 16.5, 575 - (current % divider + (10 -
+                            divider)) * 0.90 - Math.floor(
+                            current / divider) * 16.5);
+                }
+                SVG.find('#dividend_bar').timeline(timeline).animate().delay().move(350, 460 - 16.5 * Math.max(Math
+                    .floor((number - current - 1) / 10), 0));
+            }
+
+            // create groups for quotient columns
+            for (let i = 1; i <= divider; i++) {
+                quotientGroups.push(draw.group());
+                for (let j = 0; j < Math.floor(number / divider) * divider; j++) {
+                    if (j % divider === 0) {
+                        quotientGroups[i - 1].add(quotients[parseInt(j) + (i - 1)]);
+                    }
+                }
+            }
+
+
+            // move remainders from quotients 
+            SVG.find('#quotient_bar').timeline(timeline).animate().delay(100).move(350 - 16.5 * (10 - divider),
+                440 - 16.5 * Math.floor(number / divider));
+            for (let i = 1; i <= number % divider; i++) {
+                quotients[quotients.length - i].animate().delay().move(700, 450).animate().move(442 +
+                    i * 16.5, 785 + i)
+            }
+
+            // squeeze remainders 
+            SVG.find('#remainder_bar').timeline(timeline).animate().delay().move(350 - 16.5 * (10 - number %
+                divider), 365 - (10 - number % divider));
+
+            // squeeze quotient 
+            for (let i = 1; i < divider; i++) {
+                SVG.find('#quotient_bar').timeline(timeline).animate().during(function (pos, morph, eased) {
+                    quotientGroups[i - 1].hide()
+                    SVG.find('#quotientText').text(Math.floor(number / divider)).attr('visibility','visible')
+                    SVG.find('#finalText').text(number % divider).attr('visibility', 'visible')
+                }).delay().move(352 - 16.5 * (i + (10 - divider)), 440 - i - 16.5 * Math.floor(number / divider));
+            }
+
+
+        }
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const dividendVal = parseInt(urlParams.get("dividend_val"));
+        const dividerVal = parseInt(urlParams.get("divider_val"));
+        if(dividendVal > 0 && dividerVal > 0){
+            document.getElementById('dividend_val').value = dividendVal;
+            document.getElementById('divider_val').value = dividerVal;
+            start(dividendVal, dividerVal)
+        }
+    </script>
+</body>
+
+</html>
